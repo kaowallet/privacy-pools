@@ -37,6 +37,10 @@ verify-onchain:
 fuzz target="parse_wtns" secs="60":
     cd crates/privacy-pools && cargo +nightly fuzz run {{target}} -- -max_total_time={{secs}}
 
+# Proving-path fuzz: prove/verify N random *valid* withdrawals vs the helpers.
+fuzz-proving cases="256":
+    PROPTEST_CASES={{cases}} cargo test --release --test proving_fuzz
+
 # Everything: Rust tests, differential fuzz, and on-chain verification.
 validate: test differential verify-onchain
 

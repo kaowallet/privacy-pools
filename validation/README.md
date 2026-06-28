@@ -11,10 +11,18 @@ Runs random inputs through both the Rust helpers and the actual
 and asserts the outputs match — Poseidon, commitment/nullifier hashing,
 `scope`/`label`/`context`, and LeanIMT roots + membership proofs.
 
+The input distribution is adversarial, not just uniform-random: ~¼ of field /
+address inputs are boundary values (`0`, `1`, `p-1`, zero / all-`FF` address);
+`context` `data` lengths are usually **not** multiples of 32 (exercises the
+`abi.encode` right-padding branch); tree sizes straddle the LeanIMT depth
+boundaries (16/17, 31/32/33, 63/64/65); the root is checked after **every**
+insert (`leanRootSeq`), not just the final tree; and every leaf of small trees
+gets a membership proof (`leanProofs`).
+
 ```bash
 cd validation/differential
 bun install
-bun run differential.ts 200      # 200 iterations × 11 ops
+bun run differential.ts 200      # 200 iterations
 ```
 
 Requires [bun](https://bun.sh). Expect `mismatches: 0`.

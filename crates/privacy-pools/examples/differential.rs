@@ -52,6 +52,33 @@ fn run(op: &Value) -> String {
             let sibs: Vec<String> = p.siblings.iter().map(Field::to_decimal).collect();
             format!("{}:{}", p.index, sibs.join(","))
         }
+        // Root after each successive insert (exercises depth growth / promotion
+        // at every size, not just the final tree).
+        "leanRootSeq" => {
+            let leaves = fields(&op["leaves"]);
+            let mut tree = LeanImt::new();
+            let mut roots = Vec::with_capacity(leaves.len());
+            for leaf in leaves {
+                tree.insert(leaf).unwrap();
+                roots.push(tree.root().unwrap().to_decimal());
+            }
+            roots.join(";")
+        }
+        // Membership proofs for many leaves of one tree (dedups the leaf array).
+        "leanProofs" => {
+            let tree = LeanImt::from_leaves(&fields(&op["leaves"])).unwrap();
+            let proofs: Vec<String> = op["indices"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|idx| {
+                    let p = tree.generate_proof(idx.as_u64().unwrap() as usize).unwrap();
+                    let sibs: Vec<String> = p.siblings.iter().map(Field::to_decimal).collect();
+                    format!("{}:{}", p.index, sibs.join(","))
+                })
+                .collect();
+            proofs.join(";")
+        }
         other => panic!("unknown op {other}"),
     }
 }
