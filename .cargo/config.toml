@@ -1,0 +1,4 @@
+# Run the repo automation tasks with `cargo xtask <command>`.
+# e.g. `cargo xtask pull-circuits`
+[alias]
+xtask = "run --quiet --package xtask --"

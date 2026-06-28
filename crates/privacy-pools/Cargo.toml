@@ -1,0 +1,50 @@
+[package]
+name = "privacy-pools"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Generate and verify Privacy Pools (0xbow) Groth16 withdrawal/commitment proofs in pure Rust with bundled circuit artifacts — no wasmer, no node."
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["bundled", "parallel"]
+# Embed the circuit artifacts (graph + zkey + vkey) into the binary via
+# include_bytes!. Without it, load artifacts from a directory at runtime.
+bundled = []
+# Multi-threaded proving (rayon). Must be a feature on THIS crate because the
+# vendored QAP witness map uses ark_std's `cfg_iter!`, which keys off the
+# invoking crate's `parallel` feature — not just the ark deps' features.
+parallel = [
+    "dep:rayon",
+    "ark-ff/parallel",
+    "ark-ec/parallel",
+    "ark-poly/parallel",
+    "ark-std/parallel",
+    "ark-groth16/parallel",
+]
+
+[dependencies]
+# Witness generation (wasmer-free).
+circom-witnesscalc = "0.3.0"
+
+# Proving / verification. Matches circom-witnesscalc's arkworks 0.5 line so the
+# whole tree resolves to a single arkworks version.
+ark-bn254 = "0.5"
+ark-ff = "0.5"
+ark-ec = "0.5"
+ark-poly = "0.5"
+ark-relations = "0.5"
+ark-serialize = "0.5"
+ark-std = "0.5"
+ark-groth16 = "0.5"
+
+byteorder = "1"
+num-bigint = "0.4"
+num-traits = "0.2"
+rayon = { version = "1", optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+proptest = "1"

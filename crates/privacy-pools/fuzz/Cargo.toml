@@ -1,0 +1,27 @@
+[package]
+name = "privacy-pools-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+# default-features = false: fuzzing the parsers needs no bundled artifacts.
+privacy-pools = { path = "..", default-features = false }
+
+[[bin]]
+name = "parse_wtns"
+path = "fuzz_targets/parse_wtns.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "vkey"
+path = "fuzz_targets/vkey.rs"
+test = false
+doc = false
+bench = false

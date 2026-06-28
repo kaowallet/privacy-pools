@@ -1,0 +1,13 @@
+/target
+**/*.rs.bk
+Cargo.lock.bak
+
+# Working directory used by `cargo xtask pull-circuits` (clones + tools).
+# The *outputs* land in crates/privacy-pools/artifacts/ which IS committed.
+/target/pull-circuits/
+
+# node_modules anywhere (circomlib is fetched into the xtask work dir only)
+**/node_modules/
+
+# build-circuit's input-signal logs (in case it ever runs from the repo root)
+log_input_signals*.txt
