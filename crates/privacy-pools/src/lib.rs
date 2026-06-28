@@ -53,14 +53,22 @@ mod vendor;
 mod witness;
 
 mod circuit;
+mod commitment;
+mod context;
 mod inputs;
+mod poseidon;
+mod tree;
 
 pub use circuit::{Circuit, MAX_TREE_DEPTH};
+pub use commitment::{commitment_hash, nullifier_hash, precommitment, Commitment};
+pub use context::{context, label, scope, Address, Withdrawal};
 pub use error::{Error, Result};
 pub use field::Field;
 pub use inputs::{siblings, CircuitInputs, CommitmentInputs, WithdrawInputs};
+pub use poseidon::{poseidon, poseidon2};
 pub use proof::{Groth16Proof, SolidityCalldata};
 pub use prover::Prover;
+pub use tree::{compute_root, verify_inclusion, LeanImt, MerkleProof};
 pub use verifier::Verifier;
 pub use witness::{parse_wtns, GraphWitness, WitnessGenerator};
 

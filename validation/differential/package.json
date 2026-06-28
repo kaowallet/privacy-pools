@@ -1,0 +1,12 @@
+{
+  "name": "pp-differential",
+  "type": "module",
+  "private": true,
+  "description": "Differential fuzz of the privacy-pools Rust helpers against the 0xbow TypeScript SDK",
+  "dependencies": {
+    "@0xbow/privacy-pools-core-sdk": "1.2.0",
+    "@zk-kit/lean-imt": "^2.2.4",
+    "maci-crypto": "^2.5.0",
+    "viem": "^2.53.1"
+  }
+}

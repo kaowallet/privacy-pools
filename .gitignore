@@ -11,3 +11,12 @@ Cargo.lock.bak
 
 # build-circuit's input-signal logs (in case it ever runs from the repo root)
 log_input_signals*.txt
+
+# validation harness build artifacts
+/validation/differential/node_modules/
+/validation/differential/cases.json
+/validation/differential/bun.lock
+/validation/anvil/out/
+/validation/anvil/cache/
+/validation/anvil/calldata.json
+/validation/anvil/broadcast/

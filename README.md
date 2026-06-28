@@ -47,6 +47,35 @@ let json     = proof.to_snarkjs_json();           // proof.json form
 
 `CommitmentProver` / `CommitmentVerifier` work the same way.
 
+### Deriving circuit inputs
+
+The crate also derives the inputs the circuits expect — so you can go from raw
+protocol data to a proof without a separate SDK:
+
+```rust
+use privacy_pools::{scope, label, Address, Commitment, LeanImt, Withdrawal, Field};
+
+// commitments / nullifier hashes (circomlib-compatible Poseidon)
+let lbl  = label(scope(pool, chain_id, asset), nonce);
+let note = Commitment::new(value, lbl, nullifier, secret);
+let leaf = note.hash()?;
+
+// LeanIMT membership proofs in the exact shape WithdrawInputs wants
+let state = LeanImt::from_leaves(&all_commitments)?;
+let proof = state.generate_proof(my_index)?;   // -> { index, siblings, .. }
+let siblings = proof.padded_siblings()?;        // padded to MAX_TREE_DEPTH
+
+// withdrawal context (keccak256(abi.encode(Withdrawal, scope)) % p)
+let context = Withdrawal::new(processooor, data).context(scope(pool, chain_id, asset));
+# Ok::<(), privacy_pools::Error>(())
+```
+
+`tests/end_to_end.rs` builds a complete `WithdrawInputs` from scratch with these
+helpers and proves+verifies it against the circuit. All helpers are validated
+against upstream vectors: Poseidon/commitments vs the `commitment` circuit's
+outputs, LeanIMT roots vs the `withdraw` circuit's state/ASP roots, and
+`context` vs the SDK's `calculateContext` test vector.
+
 ### Features
 
 - `bundled` *(default)* — embed artifacts via `include_bytes!`. With it off,
@@ -70,6 +99,21 @@ frontend; needs `protoc`); set `$BUILD_CIRCUIT` to reuse an existing binary.
 To track a new upstream release, bump `PP_CORE_REF` in
 [`xtask/src/pull_circuits.rs`](xtask/src/pull_circuits.rs) and re-run. The zkeys
 must match whatever on-chain Groth16 verifier you target.
+
+## Validation
+
+Beyond the in-crate tests, `validation/` cross-checks against the canonical
+reference implementations:
+
+- **`validation/differential/`** — random inputs through both the Rust helpers
+  and the real `@0xbow/privacy-pools-core-sdk` (+ `@zk-kit/lean-imt`,
+  `maci-crypto`, `viem`); Poseidon, commitments, `scope`/`label`/`context`, and
+  LeanIMT roots/proofs all match (0 mismatches over thousands of cases).
+- **`validation/anvil/`** — a Rust-generated proof is verified by the actual
+  snarkjs `WithdrawalVerifier.sol` on a local anvil node: valid → `true`,
+  tampered → `false`. So the proof + Solidity calldata are on-chain compatible.
+
+See [validation/README.md](validation/README.md).
 
 ## Reuse across protocols
 

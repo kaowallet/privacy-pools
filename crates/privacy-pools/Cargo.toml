@@ -45,6 +45,14 @@ num-traits = "0.2"
 rayon = { version = "1", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+hex = { workspace = true }
+
+# Input-derivation helpers (commitments, Merkle proofs, context). circomlib-
+# compatible Poseidon over BN254; light-poseidon 0.4 tracks arkworks 0.5.
+light-poseidon = "0.4"
+# keccak256 for scope/label/context derivation.
+sha3 = "0.10"
 
 [dev-dependencies]
 proptest = "1"
+hex = { workspace = true }
