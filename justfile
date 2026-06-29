@@ -33,6 +33,10 @@ differential n="200":
 verify-onchain:
     cd validation/anvil && ./verify.sh
 
+# Full on-chain wallet lifecycle vs the deployed contract suite (needs foundry + git + bun).
+lifecycle:
+    cd validation/anvil-lifecycle && ./lifecycle.sh
+
 # Deep-fuzz a parser with cargo-fuzz (needs nightly + cargo-fuzz). target=parse_wtns|vkey, secs=time.
 fuzz target="parse_wtns" secs="60":
     cd crates/privacy-pools && cargo +nightly fuzz run {{target}} -- -max_total_time={{secs}}

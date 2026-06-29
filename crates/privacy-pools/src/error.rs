@@ -18,6 +18,9 @@ pub enum Error {
     VerificationFailed,
     /// An I/O error while loading artifacts from a runtime directory.
     Io(std::io::Error),
+    /// A chain interaction failed (RPC error, log decode, etc.) — only produced
+    /// by the `onchain` sync layer.
+    Chain(String),
 }
 
 impl fmt::Display for Error {
@@ -29,6 +32,7 @@ impl fmt::Display for Error {
             Error::Prove(m) => write!(f, "proof generation failed: {m}"),
             Error::VerificationFailed => write!(f, "groth16 verification failed"),
             Error::Io(e) => write!(f, "io error: {e}"),
+            Error::Chain(m) => write!(f, "chain error: {m}"),
         }
     }
 }

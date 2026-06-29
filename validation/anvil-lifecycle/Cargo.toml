@@ -1,0 +1,24 @@
+# Standalone (workspace-excluded) harness: runs the full deposit -> sync ->
+# withdraw(relay) -> ragequit lifecycle against contracts deployed on anvil,
+# exercising the async Syncer over a real alloy HTTP provider. Not built by
+# `cargo test --workspace`; run via validation/anvil/lifecycle.sh.
+[package]
+name = "anvil-lifecycle"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+privacy-pools = { path = "../../crates/privacy-pools", features = ["wallet", "bundled"] }
+alloy = { version = "2.0.1", default-features = false, features = [
+    "std",
+    "contract",
+    "rpc-types-eth",
+    "network",
+    "provider-http",
+    "reqwest-rustls-tls",
+    "signer-local",
+] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+anyhow = "1"
+serde_json = "1"

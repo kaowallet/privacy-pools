@@ -52,14 +52,47 @@ mod verifier;
 mod vendor;
 mod witness;
 
+#[cfg(feature = "account")]
+mod account;
 mod circuit;
 mod commitment;
 mod context;
+#[cfg(all(feature = "onchain", feature = "account"))]
+mod flow;
 mod inputs;
+#[cfg(feature = "onchain")]
+mod onchain;
 mod poseidon;
+#[cfg(feature = "onchain")]
+mod sync;
 mod tree;
 
+#[cfg(feature = "account")]
+pub use account::{Account, MasterKeys};
 pub use circuit::{Circuit, MAX_TREE_DEPTH};
+// Re-export alloy so consumers (and this crate's tests) use the exact same
+// alloy instance the bindings are built against — no duplicate alloy in the tree.
+#[cfg(feature = "onchain")]
+pub use alloy;
+#[cfg(feature = "onchain")]
+pub use onchain::{
+    deposit_erc20_calldata, deposit_native_calldata, direct_withdrawal, field_to_u256,
+    from_alloy_address, ragequit_calldata, ragequit_proof, relay_calldata, relay_data,
+    relayed_withdrawal, to_alloy_address, u256_to_field, withdraw_calldata, withdraw_proof,
+    IEntrypoint, IPrivacyPool, RagequitProof, RelayData, Withdrawal as OnchainWithdrawal,
+    WithdrawProof, NATIVE_ASSET,
+};
+#[cfg(all(feature = "onchain", feature = "account"))]
+pub use flow::{
+    build_withdrawal, erc20_deposit, native_deposit, ragequit_inputs, Destination, WithdrawalPlan,
+};
+#[cfg(all(feature = "onchain", feature = "account"))]
+pub use sync::recover_accounts;
+#[cfg(feature = "onchain")]
+pub use sync::{
+    DepositLog, LeafInsert, PoolAccount, PoolLogs, RagequitLog, Syncer, WithdrawLog,
+    ROOT_HISTORY_SIZE,
+};
 pub use commitment::{commitment_hash, nullifier_hash, precommitment, Commitment};
 pub use context::{context, label, scope, Address, Withdrawal};
 pub use error::{Error, Result};

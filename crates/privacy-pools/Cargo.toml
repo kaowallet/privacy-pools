@@ -23,6 +23,15 @@ parallel = [
     "ark-std/parallel",
     "ark-groth16/parallel",
 ]
+# HD account key derivation (mnemonic -> master keys -> per-deposit secrets),
+# byte-compatible with the 0xbow TypeScript SDK. Pulls bip39 + bip32 (k256).
+account = ["dep:bip32", "dep:bip39"]
+# On-chain ABI layer: alloy `sol!` bindings (events, view fns, calldata, proof
+# structs) + an async Syncer that drives the chain scan over an alloy provider
+# (the wallet supplies its own helios-backed transport — none is bundled here).
+onchain = ["dep:alloy"]
+# The full wallet SDK: account key derivation + on-chain sync/flows.
+wallet = ["onchain", "account"]
 
 [dependencies]
 # Witness generation (wasmer-free).
@@ -52,6 +61,23 @@ hex = { workspace = true }
 light-poseidon = "0.4"
 # keccak256 for scope/label/context derivation.
 sha3 = "0.10"
+
+# HD wallet derivation for the `account` feature. `bip39` handles the mnemonic
+# (all word counts; bip32's own mnemonic only supports 24 words), `bip32` does
+# the BIP-44 secp256k1 path derivation (via k256). Matches viem.
+bip32 = { version = "0.5", optional = true }
+bip39 = { version = "2", optional = true }
+
+# On-chain ABI + provider abstraction for the `onchain` feature. Pinned to the
+# wallet's alloy 2.0.1 so boundary types (Address/U256/Provider/Log) unify — no
+# duplicate alloy in the tree. `contract` gives sol! bindings + the Provider
+# trait + eth_call; `rpc-types-eth` gives Filter/Log. No http transport: the
+# wallet passes its own (helios-backed) provider.
+alloy = { version = "2.0.1", optional = true, default-features = false, features = [
+    "std",
+    "contract",
+    "rpc-types-eth",
+] }
 
 [dev-dependencies]
 proptest = "1"

@@ -13,8 +13,14 @@ import { writeFileSync } from "fs";
 import { join, resolve } from "path";
 import { poseidon } from "maci-crypto/build/ts/hashing.js";
 import { LeanIMT } from "@zk-kit/lean-imt";
-import { calculateContext } from "@0xbow/privacy-pools-core-sdk";
+import {
+  calculateContext,
+  generateMasterKeys,
+  generateDepositSecrets,
+  generateWithdrawalSecrets,
+} from "@0xbow/privacy-pools-core-sdk";
 import { keccak256, encodePacked } from "viem";
+import { generateMnemonic, english } from "viem/accounts";
 
 const REPO = resolve(import.meta.dir, "../..");
 const CASES = join(import.meta.dir, "cases.json");
@@ -59,6 +65,21 @@ const ref: string[] = [];
 const push = (op: Op, out: string) => { ops.push(op); ref.push(out); };
 
 for (let i = 0; i < N; i++) {
+  // Account key derivation (mnemonic -> master keys -> per-deposit secrets),
+  // checked against the SDK's crypto.ts.
+  const mnemonic = generateMnemonic(english);
+  const mk = generateMasterKeys(mnemonic);
+  push({ op: "masterKeys", mnemonic }, `${mk.masterNullifier},${mk.masterSecret}`);
+  const acctScope = BigInt(uniformField());
+  const acctLabel = BigInt(uniformField());
+  const acctIndex = BigInt(randInt(1000));
+  const ds = generateDepositSecrets(mk, acctScope as any, acctIndex);
+  push({ op: "depositSecret", mnemonic, scope: acctScope.toString(), index: acctIndex.toString() },
+    `${ds.nullifier},${ds.secret}`);
+  const ws = generateWithdrawalSecrets(mk, acctLabel as any, acctIndex);
+  push({ op: "withdrawalSecret", mnemonic, label: acctLabel.toString(), index: acctIndex.toString() },
+    `${ws.nullifier},${ws.secret}`);
+
   for (const k of [1, 2, 3]) {
     const inp = Array.from({ length: k }, randField);
     push({ op: "poseidon", in: inp }, poseidon(inp.map(BigInt)).toString());
@@ -100,7 +121,7 @@ for (let i = 0; i < N; i++) {
 
 writeFileSync(CASES, JSON.stringify({ ops }));
 
-const proc = Bun.spawnSync(["cargo", "run", "-q", "--release", "--example", "differential", "--", CASES], { cwd: REPO });
+const proc = Bun.spawnSync(["cargo", "run", "-q", "--release", "--features", "account", "--example", "differential", "--", CASES], { cwd: REPO });
 if (proc.exitCode !== 0) { console.error("rust example failed:\n", proc.stderr.toString()); process.exit(1); }
 const rust: string[] = JSON.parse(proc.stdout.toString()).out;
 

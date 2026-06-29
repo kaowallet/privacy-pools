@@ -19,7 +19,10 @@ crates/privacy-pools/
   src/
     field, witness, proof,     ── engine (protocol-agnostic; extract later)
     prover, verifier, vendor/
-    circuit, inputs, lib       ── protocol layer (Privacy Pools specifics)
+    circuit, inputs, lib       ── protocol layer (Privacy Pools proving)
+    commitment, tree, context  ── input derivation (Poseidon, LeanIMT, scope/label/context)
+    account                    ── HD keys           (feature: account)
+    onchain, sync, flow        ── wallet SDK        (feature: onchain / wallet)
 ```
 
 The `vendor/` module is the only non-arkworks proving glue: `read_zkey` and
@@ -81,6 +84,73 @@ outputs, LeanIMT roots vs the `withdraw` circuit's state/ASP roots, and
 - `bundled` *(default)* — embed artifacts via `include_bytes!`. With it off,
   load them at runtime: `WithdrawProver::from_dir("…/artifacts")`.
 - `parallel` *(default)* — multi-threaded proving (rayon).
+- `account` — HD key derivation (`Account`), byte-compatible with the 0xbow SDK.
+- `onchain` — alloy ABI bindings, calldata builders, and the async `Syncer`
+  (pulls `alloy`, pinned to 2.0.1).
+- `wallet` — the full wallet SDK = `account` + `onchain`.
+
+## Wallet SDK (`wallet` feature)
+
+The crate is a plug-and-play wallet SDK: HD accounts, chain sync over **your**
+alloy provider, note recovery, and one-call withdrawal assembly. It does **no
+network I/O on its own** — you drive the provider (so every 3rd-party request is
+user-triggered), proving stays synchronous (wrap it in your async runtime / an
+`iced::Task`), and there is no wasmer. `alloy` is re-exported as
+`privacy_pools::alloy` so your wallet and the SDK share one alloy instance.
+
+```rust
+use privacy_pools::{Account, Syncer, recover_accounts, build_withdrawal, Destination,
+                    WithdrawProver, relay_calldata, native_deposit};
+use privacy_pools::alloy::primitives::U256;
+
+// 1. HD account — same derivation as 0xbow's client, so notes are interoperable.
+let account = Account::from_mnemonic(seed_phrase)?;
+
+// 2. Deposit: precommitment + calldata (send the tx with value = amount).
+let (precommitment, calldata) = native_deposit(&account, scope, next_index)?;
+
+// 3. Sync + recover — the SDK drives YOUR (helios-backed) provider on demand.
+let syncer = Syncer::new(pool, entrypoint);
+let logs = syncer.scan_pool(&provider, deploy_block, None).await?;   // chunked eth_getLogs
+let accounts = recover_accounts(&account, scope, &logs, 10)?;        // gap-limit recovery
+let acct = &accounts[0];
+let note = acct.spendable().expect("a spendable note");
+
+// 4. Trust anchor: rebuild the trees from (untrusted) logs, then verify the
+//    roots against helios-verified eth_call. A forged log set can't pass.
+let state_tree = logs.state_tree()?;
+let state_proof = state_tree.generate_proof(logs.leaf_index(note.hash()?).unwrap())?;
+assert!(syncer.verify_state_root(&provider, state_proof.root).await?);
+// asp_proof: a LeanImt membership proof of `note.label` in the ASP leaf set you
+// fetched (e.g. via IPFS from the latest RootUpdated CID — a manual trigger):
+assert!(syncer.verify_asp_root(&provider, asp_proof.root).await?);
+
+// 5. Assemble → prove (off the UI thread) → submit.
+let dest = Destination::Relayed { entrypoint, recipient, fee_recipient,
+                                  relay_fee_bps: U256::from(250) };
+let plan = build_withdrawal(&account, scope, note, acct.children.len() as u64,
+                            U256::from(amount), &state_proof, &asp_proof, &dest)?;
+let proof = WithdrawProver::bundled()?.prove(&plan.inputs)?;
+let calldata = relay_calldata(&plan.withdrawal, &proof, scope)?;     // submit via your provider
+// persist `plan.new_note` as the change note.
+# Ok::<(), privacy_pools::Error>(())
+```
+
+**Why the SDK drives the scan over your provider** (rather than taking pre-fetched
+logs): it mirrors both the 0xbow SDK and the EF Kohaku wallet, which own the
+chunked-`getLogs` loop behind a provider seam. Helios cannot serve trustless logs
+at scale (`eth_getLogs` is capped to ~8k recent blocks), so the model — also
+Kohaku's — is to rebuild the trees from cheap untrusted logs and then verify the
+*roots* against helios-verifiable `eth_call`s (`verify_state_root` walks the
+pool's 64-slot root ring buffer; `verify_asp_root` checks `Entrypoint.latestRoot()`).
+
+Building blocks if you want more control: `Account::{deposit_secrets,
+withdrawal_secrets, deposit_precommitment}`; `Syncer::{scan_pool,
+current_state_root, current_tree_depth, latest_asp_root}`; `PoolLogs::{state_tree,
+leaf_index}`; `PoolAccount::spendable`; `erc20_deposit`; `Destination::Direct`;
+`ragequit_inputs` (+ `CommitmentProver` → `ragequit_calldata`). The raw ABI lives
+in `privacy_pools::{IPrivacyPool, IEntrypoint}` and the calldata/struct helpers
+(`withdraw_calldata`, `withdraw_proof`, `relay_data`, …).
 
 ## Regenerating artifacts
 
@@ -112,6 +182,11 @@ reference implementations:
 - **`validation/anvil/`** — a Rust-generated proof is verified by the actual
   snarkjs `WithdrawalVerifier.sol` on a local anvil node: valid → `true`,
   tampered → `false`. So the proof + Solidity calldata are on-chain compatible.
+- **`validation/anvil-lifecycle/`** — the **full wallet flow** against the whole
+  deployed suite (Poseidon libs + verifiers + `Entrypoint` proxy + native pool):
+  deposit → async `Syncer` recovery → on-chain root verification → relayed
+  withdrawal (`Entrypoint.relay`) → ragequit (`Pool.ragequit`), all accepted by
+  the real contracts (`just lifecycle`).
 
 See [validation/README.md](validation/README.md).
 

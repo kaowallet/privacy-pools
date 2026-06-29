@@ -20,3 +20,10 @@ log_input_signals*.txt
 /validation/anvil/cache/
 /validation/anvil/calldata.json
 /validation/anvil/broadcast/
+
+# anvil lifecycle harness (excluded crate): contract clone, npm deps, build out,
+# its own cargo target, and the generated deployed addresses
+/validation/anvil-lifecycle/.work/
+/validation/anvil-lifecycle/target/
+/validation/anvil-lifecycle/deployed.json
+/validation/anvil-lifecycle/Cargo.lock

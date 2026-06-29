@@ -26,7 +26,44 @@ fn u64v(v: &Value) -> u64 {
     v.as_str().unwrap().parse().unwrap()
 }
 
+/// Account-derivation ops, only available with the `account` feature. Returns
+/// `None` for non-account ops so the main `match` handles them.
+#[cfg(feature = "account")]
+fn account_op(op: &Value) -> Option<String> {
+    use privacy_pools::Account;
+    let pair = |(n, s): (Field, Field)| format!("{},{}", n.to_decimal(), s.to_decimal());
+    let mnemonic = || op["mnemonic"].as_str().unwrap();
+    let index = || op["index"].as_str().unwrap().parse::<u64>().unwrap();
+    Some(match op["op"].as_str().unwrap() {
+        "masterKeys" => {
+            let k = Account::from_mnemonic(mnemonic()).unwrap().master_keys();
+            format!("{},{}", k.nullifier.to_decimal(), k.secret.to_decimal())
+        }
+        "depositSecret" => pair(
+            Account::from_mnemonic(mnemonic())
+                .unwrap()
+                .deposit_secrets(f(&op["scope"]), index())
+                .unwrap(),
+        ),
+        "withdrawalSecret" => pair(
+            Account::from_mnemonic(mnemonic())
+                .unwrap()
+                .withdrawal_secrets(f(&op["label"]), index())
+                .unwrap(),
+        ),
+        _ => return None,
+    })
+}
+
+#[cfg(not(feature = "account"))]
+fn account_op(_: &Value) -> Option<String> {
+    None
+}
+
 fn run(op: &Value) -> String {
+    if let Some(s) = account_op(op) {
+        return s;
+    }
     match op["op"].as_str().unwrap() {
         "poseidon" => poseidon(&fields(&op["in"])).unwrap().to_decimal(),
         "nullifierHash" => nullifier_hash(f(&op["in"][0])).unwrap().to_decimal(),
