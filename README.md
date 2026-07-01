@@ -34,13 +34,18 @@ calculator — the exact dependency circom-witnesscalc lets us avoid.
 ## Usage
 
 ```rust
-use privacy_pools::{WithdrawProver, WithdrawInputs, WithdrawVerifier, Field, siblings};
+use privacy_pools::{WithdrawProver, WithdrawVerifier};
 
+// `inputs` is a `WithdrawInputs`, built from your note + Merkle proofs — see
+// "Deriving circuit inputs" below, or `build_withdrawal` in the wallet SDK.
 let prover = WithdrawProver::bundled()?;          // artifacts embedded in the binary
 let proof  = prover.prove(&inputs)?;              // WithdrawInputs -> Groth16 proof
 assert!(prover.verify(&proof)?);
 
-// verify-only consumers need just the few-KB vkey, not the 17 MB zkey:
+// Verify-only needs just the few-KB vkey to *operate*. Note: the `bundled`
+// feature still embeds every artifact — to drop the 17 MB zkey from a
+// verify-only binary, build without `bundled` and use
+// `WithdrawVerifier::from_vkey_json` / `from_dir`.
 assert!(WithdrawVerifier::bundled()?.verify(&proof)?);
 
 // on-chain / snarkjs interop:
@@ -70,7 +75,6 @@ let siblings = proof.padded_siblings()?;        // padded to MAX_TREE_DEPTH
 
 // withdrawal context (keccak256(abi.encode(Withdrawal, scope)) % p)
 let context = Withdrawal::new(processooor, data).context(scope(pool, chain_id, asset));
-# Ok::<(), privacy_pools::Error>(())
 ```
 
 `tests/end_to_end.rs` builds a complete `WithdrawInputs` from scratch with these
@@ -88,6 +92,12 @@ outputs, LeanIMT roots vs the `withdraw` circuit's state/ASP roots, and
 - `onchain` — alloy ABI bindings, calldata builders, and the async `Syncer`
   (pulls `alloy`, pinned to 2.0.1).
 - `wallet` — the full wallet SDK = `account` + `onchain`.
+
+**Bundle size:** with `bundled` on, the embedded artifacts add **~18.7 MB** to
+your binary — almost all of it `withdraw.zkey` (17 MB, the withdraw proving key);
+the commitment circuit adds ~0.9 MB and the vkeys are a few KB each. Local
+*proving* needs the zkeys; verify-only or size-sensitive builds can turn
+`bundled` off and load artifacts at runtime with `from_dir` / `from_vkey_json`.
 
 ## Wallet SDK (`wallet` feature)
 
@@ -133,8 +143,11 @@ let plan = build_withdrawal(&account, scope, note, acct.children.len() as u64,
 let proof = WithdrawProver::bundled()?.prove(&plan.inputs)?;
 let calldata = relay_calldata(&plan.withdrawal, &proof, scope)?;     // submit via your provider
 // persist `plan.new_note` as the change note.
-# Ok::<(), privacy_pools::Error>(())
 ```
+
+(Pseudo-code: the chain calls are `async`, and `pool` / `entrypoint` / `provider`
+/ `asp_proof` etc. come from your wallet — see `validation/anvil-lifecycle/` for a
+runnable end-to-end version.)
 
 **Why the SDK drives the scan over your provider** (rather than taking pre-fetched
 logs): it mirrors both the 0xbow SDK and the EF Kohaku wallet, which own the
@@ -177,8 +190,9 @@ reference implementations:
 
 - **`validation/differential/`** — random inputs through both the Rust helpers
   and the real `@0xbow/privacy-pools-core-sdk` (+ `@zk-kit/lean-imt`,
-  `maci-crypto`, `viem`); Poseidon, commitments, `scope`/`label`/`context`, and
-  LeanIMT roots/proofs all match (0 mismatches over thousands of cases).
+  `maci-crypto`, `viem`); HD key derivation (master keys + deposit/change
+  secrets), Poseidon, commitments, `scope`/`label`/`context`, and LeanIMT
+  roots/proofs all match (0 mismatches over thousands of cases).
 - **`validation/anvil/`** — a Rust-generated proof is verified by the actual
   snarkjs `WithdrawalVerifier.sol` on a local anvil node: valid → `true`,
   tampered → `false`. So the proof + Solidity calldata are on-chain compatible.
