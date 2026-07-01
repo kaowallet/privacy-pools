@@ -67,10 +67,14 @@ fn run(op: &Value) -> String {
     match op["op"].as_str().unwrap() {
         "poseidon" => poseidon(&fields(&op["in"])).unwrap().to_decimal(),
         "nullifierHash" => nullifier_hash(f(&op["in"][0])).unwrap().to_decimal(),
-        "precommitment" => precommitment(f(&op["in"][0]), f(&op["in"][1])).unwrap().to_decimal(),
+        "precommitment" => precommitment(f(&op["in"][0]), f(&op["in"][1]))
+            .unwrap()
+            .to_decimal(),
         "commitment" => {
             let a = fields(&op["in"]);
-            commitment_hash(a[0], a[1], a[2], a[3]).unwrap().to_decimal()
+            commitment_hash(a[0], a[1], a[2], a[3])
+                .unwrap()
+                .to_decimal()
         }
         "scope" => scope(addr(&op["pool"]), u64v(&op["chainId"]), addr(&op["asset"])).to_decimal(),
         "label" => label(f(&op["scope"]), u64v(&op["nonce"])).to_decimal(),
@@ -85,7 +89,9 @@ fn run(op: &Value) -> String {
             .to_decimal(),
         "leanProof" => {
             let tree = LeanImt::from_leaves(&fields(&op["leaves"])).unwrap();
-            let p = tree.generate_proof(op["index"].as_u64().unwrap() as usize).unwrap();
+            let p = tree
+                .generate_proof(op["index"].as_u64().unwrap() as usize)
+                .unwrap();
             let sibs: Vec<String> = p.siblings.iter().map(Field::to_decimal).collect();
             format!("{}:{}", p.index, sibs.join(","))
         }
@@ -121,8 +127,13 @@ fn run(op: &Value) -> String {
 }
 
 fn main() {
-    let path = std::env::args().nth(1).expect("usage: differential <ops.json>");
+    let path = std::env::args()
+        .nth(1)
+        .expect("usage: differential <ops.json>");
     let j: Value = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
     let out: Vec<String> = j["ops"].as_array().unwrap().iter().map(run).collect();
-    println!("{}", serde_json::to_string(&serde_json::json!({ "out": out })).unwrap());
+    println!(
+        "{}",
+        serde_json::to_string(&serde_json::json!({ "out": out })).unwrap()
+    );
 }

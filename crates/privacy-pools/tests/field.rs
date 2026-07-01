@@ -20,8 +20,7 @@ fn reduces_modulo_field_order() {
     // p ≡ 0
     assert_eq!(Field::from_decimal(FIELD_ORDER).unwrap(), Field::ZERO);
     // p + 5 ≡ 5
-    let p_plus_5 =
-        "21888242871839275222246405745257275088548364400416034343698204186575808495622";
+    let p_plus_5 = "21888242871839275222246405745257275088548364400416034343698204186575808495622";
     assert_eq!(Field::from_decimal(p_plus_5).unwrap(), Field::from(5u64));
 }
 

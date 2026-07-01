@@ -103,14 +103,14 @@ fn build_valid_withdraw(
 
     let new_commitment = commitment_hash(Field::from(remaining), label, n_null, n_sec).unwrap();
     let expected: Expected = [
-        new_commitment.to_decimal(),               // newCommitmentHash
+        new_commitment.to_decimal(),                  // newCommitmentHash
         nullifier_hash(e_null).unwrap().to_decimal(), // existingNullifierHash
-        Field::from(withdrawn_value).to_decimal(), // withdrawnValue
-        state_root.to_decimal(),                   // stateRoot
-        state_depth.to_decimal(),                  // stateTreeDepth
-        asp_root.to_decimal(),                     // ASPRoot
-        asp_depth.to_decimal(),                    // ASPTreeDepth
-        context.to_decimal(),                      // context
+        Field::from(withdrawn_value).to_decimal(),    // withdrawnValue
+        state_root.to_decimal(),                      // stateRoot
+        state_depth.to_decimal(),                     // stateTreeDepth
+        asp_root.to_decimal(),                        // ASPRoot
+        asp_depth.to_decimal(),                       // ASPTreeDepth
+        context.to_decimal(),                         // context
     ];
     (inputs, expected)
 }
@@ -119,7 +119,10 @@ fn build_valid_withdraw(
 /// signal is rejected.
 fn prove_and_check(inputs: &WithdrawInputs, expected: &Expected) {
     let proof = prover().prove(inputs).expect("prove valid withdrawal");
-    assert!(verifier().verify(&proof).expect("verify"), "valid proof rejected");
+    assert!(
+        verifier().verify(&proof).expect("verify"),
+        "valid proof rejected"
+    );
     assert_eq!(
         proof.public_signals_decimal().as_slice(),
         expected.as_slice(),
@@ -204,8 +207,18 @@ fn withdraw_value_and_tree_edge_cases() {
     ];
     for (ev, wv) in value_cases {
         let (inputs, expected) = build_valid_withdraw(
-            ev, wv, label, e_null, e_sec, n_null, n_sec, ctx,
-            &fillers(3, 0), 1, &fillers(3, 100), 1,
+            ev,
+            wv,
+            label,
+            e_null,
+            e_sec,
+            n_null,
+            n_sec,
+            ctx,
+            &fillers(3, 0),
+            1,
+            &fillers(3, 100),
+            1,
         );
         prove_and_check(&inputs, &expected);
     }
@@ -224,8 +237,18 @@ fn withdraw_value_and_tree_edge_cases() {
     ];
     for (sn, sp, an, ap) in shape_cases {
         let (inputs, expected) = build_valid_withdraw(
-            7_000_000, 3_000_000, label, e_null, e_sec, n_null, n_sec, ctx,
-            &fillers(sn, 0), sp, &fillers(an, 100), ap,
+            7_000_000,
+            3_000_000,
+            label,
+            e_null,
+            e_sec,
+            n_null,
+            n_sec,
+            ctx,
+            &fillers(sn, 0),
+            sp,
+            &fillers(an, 100),
+            ap,
         );
         prove_and_check(&inputs, &expected);
     }

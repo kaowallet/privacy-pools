@@ -48,8 +48,8 @@ mod error;
 mod field;
 mod proof;
 mod prover;
-mod verifier;
 mod vendor;
+mod verifier;
 mod witness;
 
 #[cfg(feature = "account")]
@@ -74,18 +74,26 @@ pub use circuit::{Circuit, MAX_TREE_DEPTH};
 // alloy instance the bindings are built against — no duplicate alloy in the tree.
 #[cfg(feature = "onchain")]
 pub use alloy;
+pub use commitment::{commitment_hash, nullifier_hash, precommitment, Commitment};
+pub use context::{context, label, scope, Address, Withdrawal};
+pub use error::{Error, Result};
+pub use field::Field;
+#[cfg(all(feature = "onchain", feature = "account"))]
+pub use flow::{
+    build_withdrawal, erc20_deposit, native_deposit, ragequit_inputs, Destination, WithdrawalPlan,
+};
+pub use inputs::{siblings, CircuitInputs, CommitmentInputs, WithdrawInputs};
 #[cfg(feature = "onchain")]
 pub use onchain::{
     deposit_erc20_calldata, deposit_native_calldata, direct_withdrawal, field_to_u256,
     from_alloy_address, ragequit_calldata, ragequit_proof, relay_calldata, relay_data,
     relayed_withdrawal, to_alloy_address, u256_to_field, withdraw_calldata, withdraw_proof,
-    IEntrypoint, IPrivacyPool, RagequitProof, RelayData, Withdrawal as OnchainWithdrawal,
-    WithdrawProof, NATIVE_ASSET,
+    IEntrypoint, IPrivacyPool, RagequitProof, RelayData, WithdrawProof,
+    Withdrawal as OnchainWithdrawal, NATIVE_ASSET,
 };
-#[cfg(all(feature = "onchain", feature = "account"))]
-pub use flow::{
-    build_withdrawal, erc20_deposit, native_deposit, ragequit_inputs, Destination, WithdrawalPlan,
-};
+pub use poseidon::{poseidon, poseidon2};
+pub use proof::{Groth16Proof, SolidityCalldata};
+pub use prover::Prover;
 #[cfg(all(feature = "onchain", feature = "account"))]
 pub use sync::recover_accounts;
 #[cfg(feature = "onchain")]
@@ -93,14 +101,6 @@ pub use sync::{
     DepositLog, LeafInsert, PoolAccount, PoolLogs, RagequitLog, Syncer, WithdrawLog,
     ROOT_HISTORY_SIZE,
 };
-pub use commitment::{commitment_hash, nullifier_hash, precommitment, Commitment};
-pub use context::{context, label, scope, Address, Withdrawal};
-pub use error::{Error, Result};
-pub use field::Field;
-pub use inputs::{siblings, CircuitInputs, CommitmentInputs, WithdrawInputs};
-pub use poseidon::{poseidon, poseidon2};
-pub use proof::{Groth16Proof, SolidityCalldata};
-pub use prover::Prover;
 pub use tree::{compute_root, verify_inclusion, LeanImt, MerkleProof};
 pub use verifier::Verifier;
 pub use witness::{parse_wtns, GraphWitness, WitnessGenerator};

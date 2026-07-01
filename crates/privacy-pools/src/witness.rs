@@ -27,7 +27,9 @@ pub struct GraphWitness {
 impl GraphWitness {
     /// `graph` is a `wtns.graph.00x` blob produced by `build-circuit`.
     pub fn new(graph: impl Into<Vec<u8>>) -> Self {
-        Self { graph: graph.into() }
+        Self {
+            graph: graph.into(),
+        }
     }
 }
 

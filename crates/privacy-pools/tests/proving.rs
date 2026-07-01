@@ -105,7 +105,10 @@ fn withdraw_public_signals_are_stable() {
     // function of the inputs. Pinning the computed outputs catches any change in
     // the witness pipeline (graph, optimization level, signal ordering).
     let prover = WithdrawProver::bundled().unwrap();
-    let sig = prover.prove(&withdraw_inputs()).unwrap().public_signals_decimal();
+    let sig = prover
+        .prove(&withdraw_inputs())
+        .unwrap()
+        .public_signals_decimal();
     assert_eq!(
         sig[0], // newCommitmentHash
         "20221811712987028781701257863323289551825415376350293487493338619948341744706"

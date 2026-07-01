@@ -61,9 +61,12 @@ pub enum Destination {
 impl Destination {
     fn withdrawal(&self) -> Withdrawal {
         match *self {
-            Destination::Relayed { entrypoint, recipient, fee_recipient, relay_fee_bps } => {
-                relayed_withdrawal(entrypoint, recipient, fee_recipient, relay_fee_bps)
-            }
+            Destination::Relayed {
+                entrypoint,
+                recipient,
+                fee_recipient,
+                relay_fee_bps,
+            } => relayed_withdrawal(entrypoint, recipient, fee_recipient, relay_fee_bps),
             Destination::Direct { processooor } => direct_withdrawal(processooor),
         }
     }
@@ -102,10 +105,14 @@ pub fn build_withdrawal(
 ) -> Result<WithdrawalPlan> {
     // The proofs must be for this note.
     if state_proof.leaf != note.hash()? {
-        return Err(Error::Input("state_proof is not for this note's commitment".into()));
+        return Err(Error::Input(
+            "state_proof is not for this note's commitment".into(),
+        ));
     }
     if asp_proof.leaf != note.label {
-        return Err(Error::Input("asp_proof is not for this note's label".into()));
+        return Err(Error::Input(
+            "asp_proof is not for this note's label".into(),
+        ));
     }
 
     let remaining = field_to_u256(note.value)
@@ -113,11 +120,20 @@ pub fn build_withdrawal(
         .ok_or_else(|| Error::Input("withdrawn value exceeds the note value".into()))?;
 
     let (new_nullifier, new_secret) = account.withdrawal_secrets(note.label, child_index)?;
-    let new_note = Commitment::new(u256_to_field(remaining), note.label, new_nullifier, new_secret);
+    let new_note = Commitment::new(
+        u256_to_field(remaining),
+        note.label,
+        new_nullifier,
+        new_secret,
+    );
 
     // Bind the withdrawal (processooor + data) and scope into the context.
     let withdrawal = dest.withdrawal();
-    let context = context(from_alloy_address(withdrawal.processooor), &withdrawal.data, scope);
+    let context = context(
+        from_alloy_address(withdrawal.processooor),
+        &withdrawal.data,
+        scope,
+    );
 
     let inputs = WithdrawInputs {
         withdrawn_value: u256_to_field(withdrawn_value),
@@ -138,7 +154,12 @@ pub fn build_withdrawal(
         asp_index: Field::from(asp_proof.index),
     };
 
-    Ok(WithdrawalPlan { inputs, context, withdrawal, new_note })
+    Ok(WithdrawalPlan {
+        inputs,
+        context,
+        withdrawal,
+        new_note,
+    })
 }
 
 // --- ragequit -------------------------------------------------------------

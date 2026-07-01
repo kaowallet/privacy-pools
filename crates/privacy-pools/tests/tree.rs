@@ -73,7 +73,9 @@ fn wrong_leaf_or_index_fails() {
     let root = tree.root().unwrap();
     let proof = tree.generate_proof(3).unwrap();
 
-    assert!(!verify_inclusion(root, Field::from(999_999u64), proof.index, &proof.siblings).unwrap());
+    assert!(
+        !verify_inclusion(root, Field::from(999_999u64), proof.index, &proof.siblings).unwrap()
+    );
     assert!(!verify_inclusion(root, proof.leaf, proof.index ^ 1, &proof.siblings).unwrap());
 
     assert!(tree.generate_proof(8).is_err()); // out of range

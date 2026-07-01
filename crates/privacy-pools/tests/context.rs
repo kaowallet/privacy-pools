@@ -14,9 +14,11 @@ fn context_matches_sdk_vector() {
     )
     .unwrap();
     let scope =
-        Field::from_hex("0x0555c5fdc167f1f1519c1b21a690de24d9be5ff0bde19447a5f28958d9256e50").unwrap();
+        Field::from_hex("0x0555c5fdc167f1f1519c1b21a690de24d9be5ff0bde19447a5f28958d9256e50")
+            .unwrap();
     let expected =
-        Field::from_hex("0x266f59df0823b7efe6821eba38eb5de1177c6366a214b59f12154cd16079965a").unwrap();
+        Field::from_hex("0x266f59df0823b7efe6821eba38eb5de1177c6366a214b59f12154cd16079965a")
+            .unwrap();
 
     assert_eq!(context(processooor, &data, scope), expected);
     assert_eq!(Withdrawal::new(processooor, data).context(scope), expected);

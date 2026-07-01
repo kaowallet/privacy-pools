@@ -137,7 +137,12 @@ impl Syncer {
     /// A syncer for a pool + entrypoint, with sensible defaults (5k-block
     /// chunks, gap limit 10 — matching the reference SDKs).
     pub fn new(pool: Address, entrypoint: Address) -> Self {
-        Self { pool, entrypoint, chunk_size: 5000, gap_limit: 10 }
+        Self {
+            pool,
+            entrypoint,
+            chunk_size: 5000,
+            gap_limit: 10,
+        }
     }
 
     /// Scan the pool's events from `from_block` to `to_block` (or chain head),
@@ -157,12 +162,18 @@ impl Syncer {
         };
 
         let dec = |e: alloy::sol_types::Error| Error::Chain(format!("log decode: {e}"));
-        let mut logs = PoolLogs { to_block: head, ..Default::default() };
+        let mut logs = PoolLogs {
+            to_block: head,
+            ..Default::default()
+        };
 
         let mut start = from_block;
         while start <= head {
             let end = (start + self.chunk_size - 1).min(head);
-            let filter = Filter::new().address(self.pool).from_block(start).to_block(end);
+            let filter = Filter::new()
+                .address(self.pool)
+                .from_block(start)
+                .to_block(end);
             let chunk = provider
                 .get_logs(&filter)
                 .await
@@ -172,7 +183,11 @@ impl Syncer {
                 let block = log.block_number.unwrap_or_default();
                 match log.topics().first() {
                     Some(t) if *t == IPrivacyPool::LeafInserted::SIGNATURE_HASH => {
-                        let d = log.log_decode::<IPrivacyPool::LeafInserted>().map_err(dec)?.inner.data;
+                        let d = log
+                            .log_decode::<IPrivacyPool::LeafInserted>()
+                            .map_err(dec)?
+                            .inner
+                            .data;
                         logs.leaves.push(LeafInsert {
                             index: d._index.to::<u64>(),
                             leaf: u256_to_field(d._leaf),
@@ -180,7 +195,11 @@ impl Syncer {
                         });
                     }
                     Some(t) if *t == IPrivacyPool::Deposited::SIGNATURE_HASH => {
-                        let d = log.log_decode::<IPrivacyPool::Deposited>().map_err(dec)?.inner.data;
+                        let d = log
+                            .log_decode::<IPrivacyPool::Deposited>()
+                            .map_err(dec)?
+                            .inner
+                            .data;
                         logs.deposits.push(DepositLog {
                             depositor: d._depositor,
                             commitment: u256_to_field(d._commitment),
@@ -191,7 +210,11 @@ impl Syncer {
                         });
                     }
                     Some(t) if *t == IPrivacyPool::Withdrawn::SIGNATURE_HASH => {
-                        let d = log.log_decode::<IPrivacyPool::Withdrawn>().map_err(dec)?.inner.data;
+                        let d = log
+                            .log_decode::<IPrivacyPool::Withdrawn>()
+                            .map_err(dec)?
+                            .inner
+                            .data;
                         logs.withdrawals.push(WithdrawLog {
                             processooor: d._processooor,
                             value: d._value,
@@ -201,7 +224,11 @@ impl Syncer {
                         });
                     }
                     Some(t) if *t == IPrivacyPool::Ragequit::SIGNATURE_HASH => {
-                        let d = log.log_decode::<IPrivacyPool::Ragequit>().map_err(dec)?.inner.data;
+                        let d = log
+                            .log_decode::<IPrivacyPool::Ragequit>()
+                            .map_err(dec)?
+                            .inner
+                            .data;
                         logs.ragequits.push(RagequitLog {
                             ragequitter: d._ragequitter,
                             commitment: u256_to_field(d._commitment),
@@ -297,12 +324,21 @@ pub fn recover_accounts(
 ) -> Result<Vec<PoolAccount>> {
     use std::collections::{HashMap, HashSet};
 
-    let deposits: HashMap<[u8; 32], &DepositLog> =
-        logs.deposits.iter().map(|d| (d.precommitment.to_bytes_be(), d)).collect();
-    let withdrawals: HashMap<[u8; 32], &WithdrawLog> =
-        logs.withdrawals.iter().map(|w| (w.spent_nullifier.to_bytes_be(), w)).collect();
-    let ragequit_labels: HashSet<[u8; 32]> =
-        logs.ragequits.iter().map(|r| r.label.to_bytes_be()).collect();
+    let deposits: HashMap<[u8; 32], &DepositLog> = logs
+        .deposits
+        .iter()
+        .map(|d| (d.precommitment.to_bytes_be(), d))
+        .collect();
+    let withdrawals: HashMap<[u8; 32], &WithdrawLog> = logs
+        .withdrawals
+        .iter()
+        .map(|w| (w.spent_nullifier.to_bytes_be(), w))
+        .collect();
+    let ragequit_labels: HashSet<[u8; 32]> = logs
+        .ragequits
+        .iter()
+        .map(|r| r.label.to_bytes_be())
+        .collect();
 
     let mut accounts = Vec::new();
     let mut misses = 0;
@@ -344,7 +380,13 @@ pub fn recover_accounts(
         }
 
         let ragequit = ragequit_labels.contains(&label.to_bytes_be());
-        accounts.push(PoolAccount { label, deposit_index: index, deposit, children, ragequit });
+        accounts.push(PoolAccount {
+            label,
+            deposit_index: index,
+            deposit,
+            children,
+            ragequit,
+        });
         index += 1;
     }
     Ok(accounts)

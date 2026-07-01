@@ -25,10 +25,11 @@ impl Address {
     /// Parse `0x…`-prefixed (or bare) 20-byte hex.
     pub fn from_hex(s: &str) -> Result<Self> {
         let h = s.strip_prefix("0x").unwrap_or(s);
-        let bytes = hex::decode(h).map_err(|e| Error::Input(format!("invalid address hex: {e}")))?;
-        let arr: [u8; 20] = bytes
-            .try_into()
-            .map_err(|v: Vec<u8>| Error::Input(format!("address must be 20 bytes, got {}", v.len())))?;
+        let bytes =
+            hex::decode(h).map_err(|e| Error::Input(format!("invalid address hex: {e}")))?;
+        let arr: [u8; 20] = bytes.try_into().map_err(|v: Vec<u8>| {
+            Error::Input(format!("address must be 20 bytes, got {}", v.len()))
+        })?;
         Ok(Address(arr))
     }
 }

@@ -15,7 +15,8 @@ fn fdec(s: &str) -> Field {
 fn commitment_and_nullifier_match_circuit_outputs() {
     // From the `commitment` circuit run on value=12, label=2^256-1, nullifier=56,
     // secret=78 (see examples/prove.rs output, which is the circuit's own result).
-    let label = fdec("115792089237316195423570985008687907853269984665640564039457584007913129639935");
+    let label =
+        fdec("115792089237316195423570985008687907853269984665640564039457584007913129639935");
 
     let nh = nullifier_hash(Field::from(56u64)).unwrap();
     assert_eq!(
@@ -23,14 +24,25 @@ fn commitment_and_nullifier_match_circuit_outputs() {
         "6275082065951062693025191952844771393149331252390508022719638233339590493096"
     );
 
-    let c = commitment_hash(Field::from(12u64), label, Field::from(56u64), Field::from(78u64)).unwrap();
+    let c = commitment_hash(
+        Field::from(12u64),
+        label,
+        Field::from(56u64),
+        Field::from(78u64),
+    )
+    .unwrap();
     assert_eq!(
         c.to_decimal(),
         "14908830324296103267270395035016969945175328767936610816837620276441541757060"
     );
 
     // Same via the Commitment struct.
-    let note = Commitment::new(Field::from(12u64), label, Field::from(56u64), Field::from(78u64));
+    let note = Commitment::new(
+        Field::from(12u64),
+        label,
+        Field::from(56u64),
+        Field::from(78u64),
+    );
     assert_eq!(note.hash().unwrap(), c);
     assert_eq!(note.nullifier_hash().unwrap(), nh);
 }
@@ -65,7 +77,13 @@ fn leanimt_root_matches_withdraw_state_and_asp_roots() {
         compute_root(existing, state_index, &siblings_of(&v, "stateSiblings")).unwrap(),
         state_root
     );
-    assert!(verify_inclusion(state_root, existing, state_index, &siblings_of(&v, "stateSiblings")).unwrap());
+    assert!(verify_inclusion(
+        state_root,
+        existing,
+        state_index,
+        &siblings_of(&v, "stateSiblings")
+    )
+    .unwrap());
 
     // ASP tree: the leaf is the label itself.
     let label = fdec(v["label"].as_str().unwrap());

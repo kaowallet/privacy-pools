@@ -87,7 +87,9 @@ pub struct LeanImt {
 
 impl LeanImt {
     pub fn new() -> Self {
-        Self { nodes: vec![vec![]] }
+        Self {
+            nodes: vec![vec![]],
+        }
     }
 
     /// Build directly from a list of leaves (insertion order preserved).
@@ -154,7 +156,9 @@ impl LeanImt {
             )));
         }
         let leaf = self.nodes[0][index];
-        let root = self.root().ok_or_else(|| Error::Input("empty tree".into()))?;
+        let root = self
+            .root()
+            .ok_or_else(|| Error::Input("empty tree".into()))?;
         let mut siblings = Vec::new();
         let mut path = Vec::new();
         for level in 0..self.depth() {
@@ -171,7 +175,12 @@ impl LeanImt {
         for (k, &bit) in path.iter().enumerate() {
             proof_index |= bit << k;
         }
-        Ok(MerkleProof { root, leaf, index: proof_index, siblings })
+        Ok(MerkleProof {
+            root,
+            leaf,
+            index: proof_index,
+            siblings,
+        })
     }
 }
 

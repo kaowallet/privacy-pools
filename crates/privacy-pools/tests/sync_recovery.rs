@@ -43,7 +43,8 @@ fn withdraw(
         processooor: Address::ZERO,
         value: U256::from(withdrawn),
         spent_nullifier: nullifier_hash(parent_nullifier).unwrap(),
-        new_commitment: commitment_hash(Field::from(parent_value - withdrawn), label, n2, s2).unwrap(),
+        new_commitment: commitment_hash(Field::from(parent_value - withdrawn), label, n2, s2)
+            .unwrap(),
         block: 2,
     }
 }
@@ -52,7 +53,11 @@ fn withdraw(
 fn recovers_deposits_changes_and_ragequit() {
     let a = acct();
     let scope = Field::from(999u64);
-    let (l0, l1, l2) = (Field::from(1000u64), Field::from(1001u64), Field::from(1002u64));
+    let (l0, l1, l2) = (
+        Field::from(1000u64),
+        Field::from(1001u64),
+        Field::from(1002u64),
+    );
 
     // Deposit 0 is partially withdrawn (100 -> 70); deposit 1 is untouched;
     // deposit 2 is ragequit.

@@ -97,13 +97,23 @@ fn ragequit_proof_uses_commitment_circuit_signals() {
 #[test]
 fn deposit_overload_mapping_is_correct() {
     // deposit_0 must be native deposit(uint256); deposit_1 the ERC20 overload.
-    assert_eq!(IEntrypoint::deposit_0Call::SELECTOR, [0xb6, 0xb5, 0x5f, 0x25]);
-    assert_eq!(IEntrypoint::deposit_1Call::SELECTOR, [0x0e, 0xfe, 0x6a, 0x8b]);
+    assert_eq!(
+        IEntrypoint::deposit_0Call::SELECTOR,
+        [0xb6, 0xb5, 0x5f, 0x25]
+    );
+    assert_eq!(
+        IEntrypoint::deposit_1Call::SELECTOR,
+        [0x0e, 0xfe, 0x6a, 0x8b]
+    );
 
     let native = deposit_native_calldata(Field::from(42u64));
     assert_eq!(&native[..4], &[0xb6, 0xb5, 0x5f, 0x25]);
 
-    let erc20 = deposit_erc20_calldata(address!("00000000000000000000000000000000000000aa"), U256::from(5), Field::from(42u64));
+    let erc20 = deposit_erc20_calldata(
+        address!("00000000000000000000000000000000000000aa"),
+        U256::from(5),
+        Field::from(42u64),
+    );
     assert_eq!(&erc20[..4], &[0x0e, 0xfe, 0x6a, 0x8b]);
 }
 
@@ -114,7 +124,10 @@ fn withdraw_calldata_has_expected_selector() {
     let w = privacy_pools::direct_withdrawal(address!("00000000000000000000000000000000000000bb"));
     let data = withdraw_calldata(&w, &proof).unwrap();
     assert_eq!(&data[..4], &[0x30, 0xc0, 0x76, 0x6d]); // withdraw(...) selector
-    assert_eq!(IPrivacyPool::withdrawCall::SELECTOR, [0x30, 0xc0, 0x76, 0x6d]);
+    assert_eq!(
+        IPrivacyPool::withdrawCall::SELECTOR,
+        [0x30, 0xc0, 0x76, 0x6d]
+    );
 }
 
 #[test]

@@ -142,9 +142,17 @@ fn proof_parts(proof: &Groth16Proof) -> Result<ProofParts> {
 pub fn withdraw_proof(proof: &Groth16Proof) -> Result<WithdrawProof> {
     let (pa, pb, pc, sig) = proof_parts(proof)?;
     let pub_signals: [U256; 8] = sig.try_into().map_err(|v: Vec<U256>| {
-        Error::Input(format!("withdraw proof needs 8 public signals, got {}", v.len()))
+        Error::Input(format!(
+            "withdraw proof needs 8 public signals, got {}",
+            v.len()
+        ))
     })?;
-    Ok(WithdrawProof { pA: pa, pB: pb, pC: pc, pubSignals: pub_signals })
+    Ok(WithdrawProof {
+        pA: pa,
+        pB: pb,
+        pC: pc,
+        pubSignals: pub_signals,
+    })
 }
 
 /// Build the on-chain `RagequitProof` (4 public signals) from a commitment
@@ -153,9 +161,17 @@ pub fn withdraw_proof(proof: &Groth16Proof) -> Result<WithdrawProof> {
 pub fn ragequit_proof(proof: &Groth16Proof) -> Result<RagequitProof> {
     let (pa, pb, pc, sig) = proof_parts(proof)?;
     let pub_signals: [U256; 4] = sig.try_into().map_err(|v: Vec<U256>| {
-        Error::Input(format!("ragequit proof needs 4 public signals, got {}", v.len()))
+        Error::Input(format!(
+            "ragequit proof needs 4 public signals, got {}",
+            v.len()
+        ))
     })?;
-    Ok(RagequitProof { pA: pa, pB: pb, pC: pc, pubSignals: pub_signals })
+    Ok(RagequitProof {
+        pA: pa,
+        pB: pb,
+        pC: pc,
+        pubSignals: pub_signals,
+    })
 }
 
 // --- Withdrawal builders --------------------------------------------------
@@ -174,7 +190,10 @@ pub fn relay_data(recipient: Address, fee_recipient: Address, relay_fee_bps: U25
 /// A direct (non-relayed) withdrawal: `processooor` calls the pool itself and
 /// `data` is empty.
 pub fn direct_withdrawal(processooor: Address) -> Withdrawal {
-    Withdrawal { processooor, data: Bytes::new() }
+    Withdrawal {
+        processooor,
+        data: Bytes::new(),
+    }
 }
 
 /// An Entrypoint-relayed withdrawal: `processooor` is the Entrypoint and `data`
@@ -235,5 +254,8 @@ pub fn relay_calldata(w: &Withdrawal, proof: &Groth16Proof, scope: Field) -> Res
 
 /// `Pool.ragequit(RagequitProof)` — original-depositor exit (no ASP approval).
 pub fn ragequit_calldata(proof: &Groth16Proof) -> Result<Bytes> {
-    Ok(SolCall::abi_encode(&IPrivacyPool::ragequitCall { _p: ragequit_proof(proof)? }).into())
+    Ok(SolCall::abi_encode(&IPrivacyPool::ragequitCall {
+        _p: ragequit_proof(proof)?,
+    })
+    .into())
 }

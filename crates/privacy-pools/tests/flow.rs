@@ -15,10 +15,15 @@ const MNEMONIC: &str = "test test test test test test test test test test test j
 /// A tree holding `leaf` at a chosen position among filler leaves, with the
 /// membership proof for it.
 fn tree_with(leaf: Field, others: usize, pos: usize, offset: u64) -> privacy_pools::MerkleProof {
-    let mut leaves: Vec<Field> = (0..others as u64).map(|i| Field::from(1000 + offset + i)).collect();
+    let mut leaves: Vec<Field> = (0..others as u64)
+        .map(|i| Field::from(1000 + offset + i))
+        .collect();
     let pos = pos.min(leaves.len());
     leaves.insert(pos, leaf);
-    LeanImt::from_leaves(&leaves).unwrap().generate_proof(pos).unwrap()
+    LeanImt::from_leaves(&leaves)
+        .unwrap()
+        .generate_proof(pos)
+        .unwrap()
 }
 
 #[test]
@@ -92,7 +97,10 @@ fn ragequit_flow_proves_with_commitment_circuit() {
 
     let inputs = ragequit_inputs(&note);
     let proof = CommitmentProver::bundled().unwrap().prove(&inputs).unwrap();
-    assert!(CommitmentVerifier::bundled().unwrap().verify(&proof).unwrap());
+    assert!(CommitmentVerifier::bundled()
+        .unwrap()
+        .verify(&proof)
+        .unwrap());
 
     // Public signal 0 is the commitment hash being exited.
     assert_eq!(

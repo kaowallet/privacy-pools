@@ -89,7 +89,10 @@ impl Prover {
         .map_err(|e| Error::Prove(e.to_string()))?;
 
         let public_signals = full_assignment[1..num_inputs].to_vec();
-        Ok(Groth16Proof { proof, public_signals })
+        Ok(Groth16Proof {
+            proof,
+            public_signals,
+        })
     }
 
     /// Verify a proof with this circuit's verifying key (from the zkey).

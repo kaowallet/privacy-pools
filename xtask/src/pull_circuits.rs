@@ -371,7 +371,10 @@ fn compile_graph(
     cmd.arg("--O1");
     sh(&mut cmd, "build-circuit")?;
     if !out.exists() {
-        bail!("build-circuit reported success but {} is missing", out.display());
+        bail!(
+            "build-circuit reported success but {} is missing",
+            out.display()
+        );
     }
     Ok(())
 }
@@ -389,7 +392,10 @@ fn ensure_build_circuit(work: &Path) -> Result<PathBuf> {
     if let Some(custom) = std::env::var_os("BUILD_CIRCUIT") {
         let p = PathBuf::from(custom);
         if !p.exists() {
-            bail!("$BUILD_CIRCUIT points at {} which does not exist", p.display());
+            bail!(
+                "$BUILD_CIRCUIT points at {} which does not exist",
+                p.display()
+            );
         }
         println!("→ using build-circuit from $BUILD_CIRCUIT: {}", p.display());
         return Ok(p);

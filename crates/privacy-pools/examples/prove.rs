@@ -2,9 +2,7 @@
 //!
 //! Run with: `cargo run --release --example prove`
 
-use privacy_pools::{
-    CommitmentInputs, CommitmentProver, Field, WithdrawProver, WithdrawVerifier,
-};
+use privacy_pools::{CommitmentInputs, CommitmentProver, Field, WithdrawProver, WithdrawVerifier};
 
 fn main() -> Result<(), privacy_pools::Error> {
     // ---- commitment: the typed-input path (4 fields) ----

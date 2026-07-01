@@ -21,7 +21,12 @@ pub fn precommitment(nullifier: Field, secret: Field) -> Result<Field> {
 }
 
 /// `Poseidon([value, label, Poseidon([nullifier, secret])])`.
-pub fn commitment_hash(value: Field, label: Field, nullifier: Field, secret: Field) -> Result<Field> {
+pub fn commitment_hash(
+    value: Field,
+    label: Field,
+    nullifier: Field,
+    secret: Field,
+) -> Result<Field> {
     let pre = precommitment(nullifier, secret)?;
     poseidon(&[value, label, pre])
 }
@@ -38,7 +43,12 @@ pub struct Commitment {
 
 impl Commitment {
     pub fn new(value: Field, label: Field, nullifier: Field, secret: Field) -> Self {
-        Self { value, label, nullifier, secret }
+        Self {
+            value,
+            label,
+            nullifier,
+            secret,
+        }
     }
 
     /// The commitment hash (the leaf inserted into the state tree).

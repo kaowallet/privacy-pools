@@ -65,7 +65,9 @@ fn build_inputs_from_scratch_then_prove_and_verify() {
     };
 
     let prover = WithdrawProver::bundled().unwrap();
-    let proof = prover.prove(&inputs).expect("circuit accepts the derived inputs");
+    let proof = prover
+        .prove(&inputs)
+        .expect("circuit accepts the derived inputs");
 
     assert!(prover.verify(&proof).unwrap());
     assert!(WithdrawVerifier::bundled().unwrap().verify(&proof).unwrap());
@@ -77,5 +79,8 @@ fn build_inputs_from_scratch_then_prove_and_verify() {
         existing.nullifier_hash().unwrap().to_decimal()
     );
     //   public[3] = stateRoot we supplied
-    assert_eq!(proof.public_signals_decimal()[3], state.root().unwrap().to_decimal());
+    assert_eq!(
+        proof.public_signals_decimal()[3],
+        state.root().unwrap().to_decimal()
+    );
 }

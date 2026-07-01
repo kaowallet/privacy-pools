@@ -53,7 +53,9 @@ impl Account {
         let priv1 = eth_private_key(phrase, passphrase, 1)?;
         let nullifier = poseidon(&[Field::from_bytes_be(&priv0)])?;
         let secret = poseidon(&[Field::from_bytes_be(&priv1)])?;
-        Ok(Self { keys: MasterKeys { nullifier, secret } })
+        Ok(Self {
+            keys: MasterKeys { nullifier, secret },
+        })
     }
 
     /// Build directly from master keys (e.g. supplied by a host keystore that
