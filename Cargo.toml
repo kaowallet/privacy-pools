@@ -3,7 +3,11 @@ resolver = "2"
 members = ["xtask", "crates/privacy-pools"]
 # Excluded: the cargo-fuzz crate (nightly + libfuzzer) and the anvil lifecycle
 # harness (pulls a full alloy provider + tokio; run explicitly, not in CI tests).
-exclude = ["crates/privacy-pools/fuzz", "validation/anvil-lifecycle"]
+exclude = [
+    "crates/privacy-pools/fuzz",
+    "validation/anvil-lifecycle",
+    "validation/witness-bench",
+]
 
 [workspace.package]
 edition = "2021"

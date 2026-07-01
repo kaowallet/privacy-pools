@@ -27,3 +27,7 @@ log_input_signals*.txt
 /validation/anvil-lifecycle/target/
 /validation/anvil-lifecycle/deployed.json
 /validation/anvil-lifecycle/Cargo.lock
+
+/validation/witness-bench/assets
+/validation/witness-bench/target
+

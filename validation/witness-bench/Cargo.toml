@@ -1,0 +1,36 @@
+# Standalone (workspace-excluded) benchmark: witnesscalc *graph* backend (our
+# wasmer-free path) vs the classic circom `.wasm` + **wasmer** runtime, on the
+# real privacy-pools `commitment` and `withdraw` circuits.
+#
+# Kept out of the main workspace because ark-circom 0.6 pulls arkworks 0.6 +
+# wasmer 6 (the crate itself is pinned to arkworks 0.5). We never cross the two
+# arkworks versions: witnesses are compared as decimal strings at the boundary.
+#
+# Run: cargo run --release --manifest-path validation/witness-bench/Cargo.toml
+[package]
+name = "witness-bench"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# Our solution: graph-based witness generation, no wasm/node runtime.
+circom-witnesscalc = "0.3.0"
+
+# The wasmer path: ark-circom's WitnessCalculator drives a circom `.wasm` over
+# wasmer. Default features (ethereum/ethers-core) are irrelevant here but cheap
+# to leave on; `Store` comes from wasmer directly.
+ark-circom = "0.6.0"
+wasmer = "6"
+
+num-bigint = "0.4"
+serde_json = "1"
+anyhow = "1"
+# circom-witnesscalc 0.3's `calc_witness` unconditionally `println!`s two timing
+# lines per call; we redirect stdout at the fd level during the measured loop so
+# that I/O neither pollutes the report nor inflates the graph timing.
+gag = "1"
+
+[profile.release]
+# Match how a real prover would ship: optimized.
+opt-level = 3
