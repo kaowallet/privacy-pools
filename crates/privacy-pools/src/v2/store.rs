@@ -7,8 +7,9 @@ use std::path::{Path, PathBuf};
 
 use sha2::{Digest, Sha256};
 
-use super::{catalog, Circuit};
+use super::{catalog, Circuit, CircuitInputs};
 use crate::error::{Error, Result};
+use crate::proof::Groth16Proof;
 use crate::prover::Prover;
 use crate::verifier::Verifier;
 
@@ -205,6 +206,14 @@ impl CircuitStore {
         let graph = self.load(&graph)?;
         let zkey = self.load(&zkey)?;
         Prover::new(&graph, &zkey)
+    }
+
+    /// Prove typed `inputs` (validated first). Loads the prover each call;
+    /// for repeated proofs keep a [`prover`](Self::prover) and pass it
+    /// [`CircuitInputs::to_input_json`].
+    pub fn prove(&self, inputs: &impl CircuitInputs) -> Result<Groth16Proof> {
+        let json = inputs.to_input_json()?;
+        self.prover(inputs.circuit())?.prove(&json)
     }
 
     /// A verifier for `circuit` (vkey only — no zkey needed).

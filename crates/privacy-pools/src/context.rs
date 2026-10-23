@@ -32,16 +32,22 @@ impl Address {
         })?;
         Ok(Address(arr))
     }
+
+    /// `uint256(uint160(address))` as a field element — how addresses and
+    /// token ids enter Privacy Pools v2 circuits.
+    pub fn to_field(self) -> Field {
+        Field::from_bytes_be(&self.0)
+    }
 }
 
-fn keccak256(data: &[u8]) -> [u8; 32] {
+pub(crate) fn keccak256(data: &[u8]) -> [u8; 32] {
     let mut h = Keccak256::new();
     h.update(data);
     h.finalize().into()
 }
 
 /// Big-endian 32-byte (uint256) encoding of a u64.
-fn word(x: u64) -> [u8; 32] {
+pub(crate) fn word(x: u64) -> [u8; 32] {
     let mut b = [0u8; 32];
     b[24..].copy_from_slice(&x.to_be_bytes());
     b

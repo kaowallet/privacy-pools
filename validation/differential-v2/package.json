@@ -1,0 +1,11 @@
+{
+  "name": "pp-differential-v2",
+  "type": "module",
+  "private": true,
+  "description": "Differential fuzz of the privacy-pools v2 Rust module against the 0xbow v2 TypeScript SDK",
+  "dependencies": {
+    "@0xbow/privacy-pools-v2-sdk": "1.0.2",
+    "@zk-kit/lean-imt": "2.2.4",
+    "viem": "2.45.3"
+  }
+}

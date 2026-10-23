@@ -1,7 +1,17 @@
-//! Privacy Pools **v2** circuits (0xbow `privacy-pools-v2-monorepo` v1.0.2,
-//! ppv2-ceremony keys).
+//! Privacy Pools **v2** (0xbow `privacy-pools-v2-monorepo` v1.0.2,
+//! ppv2-ceremony keys): keys, note math, typed circuit inputs and circuit
+//! artifacts. Byte-compatible with `@0xbow/privacy-pools-v2-sdk@1.0.2`.
 //!
-//! [Protocol layer — artifact wiring only so far; typed v2 inputs come next.]
+//! - **Keys** (`keys-v2` feature): `Keys::from_signature` derives the
+//!   nullifying, revocable and X25519 viewing keys from one EIP-712 signature
+//!   over [`secret_derivation_digest`] — no mnemonic or passphrase.
+//! - **Notes**: [`Note`], [`OutputNote`] and the leaf hashes of the state,
+//!   keystore and association-set trees ([`note`] functions).
+//! - **Binding**: [`deposit_context`] / [`transact_context`] over the
+//!   [`NoteData`] and [`TransactParams`] sent on-chain.
+//! - **Inputs**: [`DepositInputs`], [`RagequitInputs`], [`TransactInputs`]
+//!   ([`CircuitInputs`]) — validated witness JSON plus the expected public
+//!   signals; prove them with [`CircuitStore::prove`].
 //!
 //! v2 ships 27 circuits: `deposit`, `ragequit` and `transact_NxM` for
 //! `N, M ∈ 1..=5`, with ~1 GB of proving keys (zkeys). Artifacts are served by a
@@ -21,12 +31,32 @@
 #[cfg(feature = "partial-bundled-v2")]
 mod bundled;
 mod catalog;
+mod context;
 #[cfg(feature = "download")]
 mod download;
+mod eip712;
+mod inputs;
+#[cfg(feature = "keys-v2")]
+mod keys;
+pub mod note;
 mod store;
 
+pub use context::{
+    deposit_context, payout_routing_data, transact_context, NoteData, TransactParams,
+};
 #[cfg(feature = "download")]
 pub use download::DownloadProgress;
+pub use eip712::{
+    address_hash, secret_derivation_digest, secret_derivation_typed_data, SetAuthPolicy,
+    APP_IDENTIFIER, SECRET_DERIVATION_PURPOSE,
+};
+pub use inputs::{
+    binary_merkle_root, CircuitInputs, DepositInputs, RagequitInputs, SpendNote, TransactInput,
+    TransactInputs,
+};
+#[cfg(feature = "keys-v2")]
+pub use keys::Keys;
+pub use note::{secret_from_entropy, Note, OutputNote, NATIVE_ASSET};
 pub use store::{ArtifactKind, ArtifactSource, CircuitStore};
 
 /// `Transact` / `Ragequit` maximum state-tree depth (sibling array length).

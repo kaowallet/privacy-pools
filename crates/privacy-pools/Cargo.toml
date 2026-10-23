@@ -41,6 +41,10 @@ account = ["dep:bip32", "dep:bip39"]
 onchain = ["dep:alloy"]
 # The full wallet SDK: account key derivation + on-chain sync/flows.
 wallet = ["onchain", "account"]
+# Privacy Pools v2 keys (`v2::Keys`) from one EIP-712 wallet signature,
+# byte-compatible with @0xbow/privacy-pools-v2-sdk `deriveKeysFromSignature`:
+# HKDF-SHA256 tree + X25519 viewing key. Pulls hkdf + curve25519-dalek.
+keys-v2 = ["dep:hkdf", "dep:curve25519-dalek"]
 
 [dependencies]
 # Witness generation (wasmer-free).
@@ -89,6 +93,12 @@ alloy = { version = "2.0.1", optional = true, default-features = false, features
     "contract",
     "rpc-types-eth",
 ] }
+
+# v2 key derivation (`keys-v2`). hkdf 0.12 reuses the hmac/digest 0.10 already in
+# the tree; curve25519-dalek 4.1 gives RFC 7748 clamped X25519 scalar mults.
+# (Both newer majors need Rust 1.85, above our MSRV.)
+hkdf = { version = "0.12", optional = true }
+curve25519-dalek = { version = "4.1", optional = true, default-features = false }
 
 # Blocking HTTP for the `download` feature. rustls only (no gzip, no native-tls).
 ureq = { version = "3.5", optional = true, default-features = false, features = [
