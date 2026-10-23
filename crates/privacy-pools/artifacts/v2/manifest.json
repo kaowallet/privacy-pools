@@ -1,0 +1,1103 @@
+{
+  "generator": "xtask pull-circuits-v2 (0.1.0 build)",
+  "source": {
+    "repo": "https://github.com/0xbow-io/privacy-pools-v2-monorepo.git",
+    "git_ref": "v1.0.2"
+  },
+  "source_commit": "1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da",
+  "circomlib": {
+    "repo": "https://github.com/iden3/circomlib.git",
+    "git_ref": "v2.0.5"
+  },
+  "zk_kit": {
+    "repo": "https://github.com/privacy-scaling-explorations/zk-kit.circom.git",
+    "git_ref": "binary-merkle-root.circom-v2.0.0"
+  },
+  "witnesscalc_version": "0.3.0",
+  "circuits": {
+    "deposit": {
+      "template": "Deposit",
+      "params": [],
+      "public_signals": [
+        "outputCommitment",
+        "tokenId",
+        "value",
+        "context"
+      ],
+      "graph": {
+        "file": "deposit.graph.bin",
+        "sha256": "359cb8e1cc5e6864f8a147c0f66f14405a5a07eab54987930aeca59a1ed7b221",
+        "bytes": 89120
+      },
+      "vkey": {
+        "file": "deposit.vkey.json",
+        "sha256": "923f71ca381d6f8ee07c18807f738c4b2617494388efc4b1f914c3253f01da86",
+        "bytes": 3741
+      },
+      "zkey": {
+        "file": "deposit.zkey",
+        "sha256": "e6fb5283c7b7511b0422a773d9f054925969e47e8ddf55a6b38b590c951a73a4",
+        "bytes": 1234244,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/deposit/groth16_pkey.zkey",
+        "bundled": true
+      }
+    },
+    "ragequit": {
+      "template": "Ragequit",
+      "params": [
+        18
+      ],
+      "public_signals": [
+        "nullifierHash",
+        "commitment",
+        "keystoreRoot",
+        "ownerAddress",
+        "value",
+        "tokenId",
+        "label"
+      ],
+      "graph": {
+        "file": "ragequit.graph.bin",
+        "sha256": "3e16580f89d6ceafb167fd5010a069885ff49d70be026406e4bb770260b490ab",
+        "bytes": 356028
+      },
+      "vkey": {
+        "file": "ragequit.vkey.json",
+        "sha256": "ea987f112952f0eda4acd5cfe76ea6a3e8114467b1159207b1aedd8b1c631913",
+        "bytes": 4335
+      },
+      "zkey": {
+        "file": "ragequit.zkey",
+        "sha256": "044abe871b1b79fecb6b4ca6128d08a142d7ce8665f439032953bae92f6ab076",
+        "bytes": 6135282,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/ragequit/groth16_pkey.zkey",
+        "bundled": true
+      }
+    },
+    "transact_1x1": {
+      "template": "Transact",
+      "params": [
+        1,
+        1,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "outputCommitments[0]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_1x1.graph.bin",
+        "sha256": "0db4b77d584c68a590737c818339e0076016dad14128a95009815388737e2974",
+        "bytes": 918955
+      },
+      "vkey": {
+        "file": "transact_1x1.vkey.json",
+        "sha256": "6541ab63bd3859452637989aabfc62949b94952bcdc9dd70ef1d38a4e838c155",
+        "bytes": 4528
+      },
+      "zkey": {
+        "file": "transact_1x1.zkey",
+        "sha256": "e92ad88f417c034f073580658839b64fdd1ad3c89a86a9faa926728f80351121",
+        "bytes": 18144961,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_1x1/groth16_pkey.zkey",
+        "bundled": true
+      }
+    },
+    "transact_1x2": {
+      "template": "Transact",
+      "params": [
+        1,
+        2,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_1x2.graph.bin",
+        "sha256": "e037f2a24cc0ce4889d96943b20339292e422c8b3743623135501148024dc194",
+        "bytes": 959933
+      },
+      "vkey": {
+        "file": "transact_1x2.vkey.json",
+        "sha256": "9d272d508ac04695a99cd89fa93e5fcc979fb8ad9a8db919ea28afd3de7e277e",
+        "bytes": 4720
+      },
+      "zkey": {
+        "file": "transact_1x2.zkey",
+        "sha256": "996b738388d50b8e85fa1c84b0733ac70ad3c2f320e226037d91ad8c8bf1335f",
+        "bytes": 18776273,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_1x2/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_1x3": {
+      "template": "Transact",
+      "params": [
+        1,
+        3,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_1x3.graph.bin",
+        "sha256": "12233303072a9c9f16d6fca50975b95c98bf32a2ed5eac00da5fa5dcd933ba25",
+        "bytes": 1001119
+      },
+      "vkey": {
+        "file": "transact_1x3.vkey.json",
+        "sha256": "f755f07f5e281e04bb16214b7ad0a8ddb8cf4fb0bf18093ad97962bdab38614e",
+        "bytes": 4920
+      },
+      "zkey": {
+        "file": "transact_1x3.zkey",
+        "sha256": "6e6e697f672a35770d2d9f49588bc841b943ff7c10a6afed07b6627d5f62fd3f",
+        "bytes": 19410673,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_1x3/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_1x4": {
+      "template": "Transact",
+      "params": [
+        1,
+        4,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_1x4.graph.bin",
+        "sha256": "af1a983e758b6235a5d6b05ee96c9f6adb5c50f112e5523d5dfd94d090e01ae4",
+        "bytes": 1042521
+      },
+      "vkey": {
+        "file": "transact_1x4.vkey.json",
+        "sha256": "68aba7cc58d9012d2fb61d6db6c2f31577996e204c334ace0a9893f48697fbdb",
+        "bytes": 5116
+      },
+      "zkey": {
+        "file": "transact_1x4.zkey",
+        "sha256": "5ddee0a56c6ffc09c3f1f4ac4be78fe54b5c2b626a922eaec14e848558f91542",
+        "bytes": 20048164,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_1x4/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_1x5": {
+      "template": "Transact",
+      "params": [
+        1,
+        5,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "outputCommitments[4]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_1x5.graph.bin",
+        "sha256": "0253e1da8a6a84470aea153f21b0745ad2d3aea12c716981a84b17be06b6095a",
+        "bytes": 1084136
+      },
+      "vkey": {
+        "file": "transact_1x5.vkey.json",
+        "sha256": "d6cf1310f5de3c90735de976f3fe07f8e22d435043fe68aab80cef822b8f6b09",
+        "bytes": 5318
+      },
+      "zkey": {
+        "file": "transact_1x5.zkey",
+        "sha256": "eeb45b1fd355d87a4975341b70982f993215370efec45c8b13bb065c6d9145c1",
+        "bytes": 20688734,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_1x5/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_2x1": {
+      "template": "Transact",
+      "params": [
+        2,
+        1,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "outputCommitments[0]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_2x1.graph.bin",
+        "sha256": "c677eab256501c9ad55dd5acdf036ede367b2cf526b9795b1def2846ce8889f3",
+        "bytes": 1489835
+      },
+      "vkey": {
+        "file": "transact_2x1.vkey.json",
+        "sha256": "eac99f1b7cdf1ee7949a6288151278565af02ee14cec10f0f16ed9aa59302781",
+        "bytes": 4724
+      },
+      "zkey": {
+        "file": "transact_2x1.zkey",
+        "sha256": "3afe537fd4762cb6957f1c8532049879a4f29ed7c54ef893a8299dabf68d9ea5",
+        "bytes": 27073730,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_2x1/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_2x2": {
+      "template": "Transact",
+      "params": [
+        2,
+        2,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_2x2.graph.bin",
+        "sha256": "d7aaf6ae56c642c2bd66a4ba54d3fb789bd3690a057e081eac1464ec08856883",
+        "bytes": 1530938
+      },
+      "vkey": {
+        "file": "transact_2x2.vkey.json",
+        "sha256": "71f00aab9752367a94373831c17e8227dd538dfb1bbc3226d5fa0359746a0f32",
+        "bytes": 4921
+      },
+      "zkey": {
+        "file": "transact_2x2.zkey",
+        "sha256": "2083cba8cbeba5eb56756331fc01ce1849ebbec7bc64aaeb7a58a7417264f391",
+        "bytes": 27706906,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_2x2/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_2x3": {
+      "template": "Transact",
+      "params": [
+        2,
+        3,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_2x3.graph.bin",
+        "sha256": "a5f483b59eb6b54c5063b36bbea6e58bc10a67cec2a41e69e604cdd1c4898aa3",
+        "bytes": 1572251
+      },
+      "vkey": {
+        "file": "transact_2x3.vkey.json",
+        "sha256": "41fba209a25f2884d7fa998f4657276206cd7ce07cb5cf2ac39a9b690fae4586",
+        "bytes": 5116
+      },
+      "zkey": {
+        "file": "transact_2x3.zkey",
+        "sha256": "b22cc9171ce8c86b00aa95d095c4ed9eb9d5a97df1e2c2d5ee3257b37946b28f",
+        "bytes": 32537474,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_2x3/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_2x4": {
+      "template": "Transact",
+      "params": [
+        2,
+        4,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_2x4.graph.bin",
+        "sha256": "c70a6b5a1e564577b17c485f362ebb0c086ff4fed40c4c13fb9a38072cb6a04b",
+        "bytes": 1613777
+      },
+      "vkey": {
+        "file": "transact_2x4.vkey.json",
+        "sha256": "801a32a20f19315ecc070e56ff0f8c7ea3afecb95ab16efecbfa9e71a86e0301",
+        "bytes": 5313
+      },
+      "zkey": {
+        "file": "transact_2x4.zkey",
+        "sha256": "b816f6391e06595e714840d66f59a8757541f7eb3160fc92e78275ffad544ccd",
+        "bytes": 33176823,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_2x4/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_2x5": {
+      "template": "Transact",
+      "params": [
+        2,
+        5,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "outputCommitments[4]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_2x5.graph.bin",
+        "sha256": "a37d52c6051a492573967389efd3d63e64c7256d77adf7f566799d8bdeb2f8e9",
+        "bytes": 1655515
+      },
+      "vkey": {
+        "file": "transact_2x5.vkey.json",
+        "sha256": "593167b2c4eac43b237f6ee9814e7ebe5e02ff91fe9002b3bda84c5e0a0f51e1",
+        "bytes": 5509
+      },
+      "zkey": {
+        "file": "transact_2x5.zkey",
+        "sha256": "259a99de8620a1020680a3eb501b9f2c489cd2a6a0abff0d68967eb76ce937f0",
+        "bytes": 33819266,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_2x5/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_3x1": {
+      "template": "Transact",
+      "params": [
+        3,
+        1,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "outputCommitments[0]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_3x1.graph.bin",
+        "sha256": "f8844548e8d2cbdb01eb193b93cc3bded3109c7f2f44f7ae710157e68ee9cd35",
+        "bytes": 2060760
+      },
+      "vkey": {
+        "file": "transact_3x1.vkey.json",
+        "sha256": "01d1c8b0bd42e549d3f726a722056e1d3339b992fd52dd1acdf99fe1794fe8c6",
+        "bytes": 4922
+      },
+      "zkey": {
+        "file": "transact_3x1.zkey",
+        "sha256": "cb03d64333509767bf1a7cff131e2d790f15afe9dfd74e942398e451d24f754e",
+        "bytes": 40196480,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_3x1/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_3x2": {
+      "template": "Transact",
+      "params": [
+        3,
+        2,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_3x2.graph.bin",
+        "sha256": "9cfb8b612780cc3ed495de2e81fcef09c28c63a90d6c66570f9353341a02439c",
+        "bytes": 2101980
+      },
+      "vkey": {
+        "file": "transact_3x2.vkey.json",
+        "sha256": "068fd751e29d2377b81dab01f0db806162109d5f9a998cbe152140ba8a2a81a0",
+        "bytes": 5116
+      },
+      "zkey": {
+        "file": "transact_3x2.zkey",
+        "sha256": "e342328a03523b693462d75e96de5da6ddf8094940007a09ab38ca394540e707",
+        "bytes": 40831200,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_3x2/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_3x3": {
+      "template": "Transact",
+      "params": [
+        3,
+        3,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_3x3.graph.bin",
+        "sha256": "167dcf5411da238e97fd1fe48f7b7e0eb46873686f21d20c18e29dd3047f6712",
+        "bytes": 2143414
+      },
+      "vkey": {
+        "file": "transact_3x3.vkey.json",
+        "sha256": "c221a2f3744780cb1222f5cdbedb753fbf5db07d6409bef87898afb084d8a56c",
+        "bytes": 5314
+      },
+      "zkey": {
+        "file": "transact_3x3.zkey",
+        "sha256": "e1d7ce07915fad1d8d6562ef166a2fce981bdf211827a81f2ba3e029f7b01268",
+        "bytes": 41469005,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_3x3/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_3x4": {
+      "template": "Transact",
+      "params": [
+        3,
+        4,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_3x4.graph.bin",
+        "sha256": "951da04d13a051666639e979caa0b30bc3d086666674dc5eabd1a4934ed9a4c1",
+        "bytes": 2185060
+      },
+      "vkey": {
+        "file": "transact_3x4.vkey.json",
+        "sha256": "44be2e4bcd75a58ac3284100230ef6ff847850fa2203141e43b81035539b6e4a",
+        "bytes": 5500
+      },
+      "zkey": {
+        "file": "transact_3x4.zkey",
+        "sha256": "83475261ec0e8125651e3672491d27318cec1db42cadce4cb2db7ab6b907fdc3",
+        "bytes": 42109904,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_3x4/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_3x5": {
+      "template": "Transact",
+      "params": [
+        3,
+        5,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "outputCommitments[4]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_3x5.graph.bin",
+        "sha256": "89afd3a35cec514b1d81aeaff091016e48edaaecffca6fc5a8b0d5cdd21916aa",
+        "bytes": 2226917
+      },
+      "vkey": {
+        "file": "transact_3x5.vkey.json",
+        "sha256": "cfa1576df1f77684f518577db62413be57dd03b3eb37bef2f92a7ded77e5daa2",
+        "bytes": 5704
+      },
+      "zkey": {
+        "file": "transact_3x5.zkey",
+        "sha256": "f1816f47842fa384592241e962a46f3938ff8fb931c42b6c5a1021d4ff1481ab",
+        "bytes": 42753882,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_3x5/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_4x1": {
+      "template": "Transact",
+      "params": [
+        4,
+        1,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "outputCommitments[0]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_4x1.graph.bin",
+        "sha256": "65cfcbb77dcba4cd6c0a51bf1e80d3c01614155fe5ff93d03bf22e4b6dbd3768",
+        "bytes": 2631686
+      },
+      "vkey": {
+        "file": "transact_4x1.vkey.json",
+        "sha256": "123bd5234fe613b531e4c2a394f7c88f609139ed029817dec51b3dfef6cc1e0b",
+        "bytes": 5116
+      },
+      "zkey": {
+        "file": "transact_4x1.zkey",
+        "sha256": "6c9a5eaea3f44de8a16de1436839721c3c1a3f92c5746719a6e1d0bf27b7fed8",
+        "bytes": 49124926,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_4x1/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_4x2": {
+      "template": "Transact",
+      "params": [
+        4,
+        2,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_4x2.graph.bin",
+        "sha256": "4d9b13d29a0b078cd9ea5cdb75d3a78f25b842be38eeeb28fbe7e4ccddcb0b31",
+        "bytes": 2673025
+      },
+      "vkey": {
+        "file": "transact_4x2.vkey.json",
+        "sha256": "4207b3a6f096525413ddfce137fa0dfc1779af89ddd881fa9d474aea7608345b",
+        "bytes": 5310
+      },
+      "zkey": {
+        "file": "transact_4x2.zkey",
+        "sha256": "211675e1dd535fd03e4ae923a13b186c28c2ba60fb1a1b502203979fc863e1cd",
+        "bytes": 49761196,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_4x2/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_4x3": {
+      "template": "Transact",
+      "params": [
+        4,
+        3,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_4x3.graph.bin",
+        "sha256": "dab271a600888b9f0c902f72b13266be8cf98ccf142d6d90e7db5c76ff23f5bf",
+        "bytes": 2714574
+      },
+      "vkey": {
+        "file": "transact_4x3.vkey.json",
+        "sha256": "fb28caff6c39efbad62e97826314e5653a204661767a722a4f27c7e99e42c014",
+        "bytes": 5507
+      },
+      "zkey": {
+        "file": "transact_4x3.zkey",
+        "sha256": "a9427d68a67b55a9d81c071fea3ffc52bafe4d2eadda0250c20708ab9db405d2",
+        "bytes": 50400542,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_4x3/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_4x4": {
+      "template": "Transact",
+      "params": [
+        4,
+        4,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_4x4.graph.bin",
+        "sha256": "cb99eedf1cf21c402aab1118c070745be487bd9c8ef7421f78dde0eb69019573",
+        "bytes": 2756340
+      },
+      "vkey": {
+        "file": "transact_4x4.vkey.json",
+        "sha256": "aafac3ff67eedcc985193ad7521a0ab3b7f414a4d44784d6e18ae5043a6baf8a",
+        "bytes": 5706
+      },
+      "zkey": {
+        "file": "transact_4x4.zkey",
+        "sha256": "3a8cdb10ede535c64303b198e2db9a4c8c9c5a49bb340c487a220dd64ee47c95",
+        "bytes": 51042982,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_4x4/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_4x5": {
+      "template": "Transact",
+      "params": [
+        4,
+        5,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "outputCommitments[4]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_4x5.graph.bin",
+        "sha256": "69aada61195b8f5ed0c9eb355a4484b7910bdd64f3f93bf8c92c37b17f207854",
+        "bytes": 2798317
+      },
+      "vkey": {
+        "file": "transact_4x5.vkey.json",
+        "sha256": "39fe66bc2f4b593edab1d48adca7631fcda12649616c4d3eea416791f679a4a9",
+        "bytes": 5899
+      },
+      "zkey": {
+        "file": "transact_4x5.zkey",
+        "sha256": "239041de4d4d28356afd61cffbd2b2e8909c7e843b923aed8d79c7364bda5345",
+        "bytes": 51688510,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_4x5/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_5x1": {
+      "template": "Transact",
+      "params": [
+        5,
+        1,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "nullifierHashes[4]",
+        "outputCommitments[0]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_5x1.graph.bin",
+        "sha256": "fc41a0b64244a7575e899b4db58d2a049548d7f807814557dc6535c927486d27",
+        "bytes": 3202609
+      },
+      "vkey": {
+        "file": "transact_5x1.vkey.json",
+        "sha256": "b798641ce2b9c702ce11449f051d8f936e328812695504fda4929f164a765d1d",
+        "bytes": 5311
+      },
+      "zkey": {
+        "file": "transact_5x1.zkey",
+        "sha256": "895add3547d0d33eaae16287148a1596fc9ca6d61a7a5cdfc3461c1633e8736f",
+        "bytes": 66441986,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_5x1/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_5x2": {
+      "template": "Transact",
+      "params": [
+        5,
+        2,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "nullifierHashes[4]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_5x2.graph.bin",
+        "sha256": "95883d1b985ff26bf1f90c1a6ab00510af440952835afd9e14cf1fbba990e51d",
+        "bytes": 3244068
+      },
+      "vkey": {
+        "file": "transact_5x2.vkey.json",
+        "sha256": "3c5e01915d911b871f6f0842282f104a0fded5c3bf62f7f847ba1dfda8e510e9",
+        "bytes": 5509
+      },
+      "zkey": {
+        "file": "transact_5x2.zkey",
+        "sha256": "e2f5f69e7365e63329fc840974b4a6b0c13553b9829dc4c95f45fd71fbc86baa",
+        "bytes": 67079803,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_5x2/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_5x3": {
+      "template": "Transact",
+      "params": [
+        5,
+        3,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "nullifierHashes[4]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_5x3.graph.bin",
+        "sha256": "6bab4cdfd28c0e6eb978e0472835cad2c9b23cecb9aefa2e54b25beeaf0a1760",
+        "bytes": 3285741
+      },
+      "vkey": {
+        "file": "transact_5x3.vkey.json",
+        "sha256": "18737c2c6862859010489e7f4801ed66d6987dd07e70131036136226d26d1f7e",
+        "bytes": 5706
+      },
+      "zkey": {
+        "file": "transact_5x3.zkey",
+        "sha256": "c9b2d185fea95ad798a6f8be531d7d4454aa5c4a6285a8c5ec1d9d4709487020",
+        "bytes": 67720696,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_5x3/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_5x4": {
+      "template": "Transact",
+      "params": [
+        5,
+        4,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "nullifierHashes[4]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_5x4.graph.bin",
+        "sha256": "ff227eac08612f44a81a2d88e11e5f55f34cb05a371525a6d1266cc1e46496a1",
+        "bytes": 3327621
+      },
+      "vkey": {
+        "file": "transact_5x4.vkey.json",
+        "sha256": "d042860c5b0f6125370cdc308ea8216ce8b29879b0f6951248704c1b4b9ee795",
+        "bytes": 5896
+      },
+      "zkey": {
+        "file": "transact_5x4.zkey",
+        "sha256": "3f974b64a084bfa5bcf2b1f700e643ea6b7bc37e35f30e588ef6b80e21d0ef5b",
+        "bytes": 68364686,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_5x4/groth16_pkey.zkey",
+        "bundled": false
+      }
+    },
+    "transact_5x5": {
+      "template": "Transact",
+      "params": [
+        5,
+        5,
+        22,
+        18,
+        18
+      ],
+      "public_signals": [
+        "nullifierHashes[0]",
+        "nullifierHashes[1]",
+        "nullifierHashes[2]",
+        "nullifierHashes[3]",
+        "nullifierHashes[4]",
+        "outputCommitments[0]",
+        "outputCommitments[1]",
+        "outputCommitments[2]",
+        "outputCommitments[3]",
+        "outputCommitments[4]",
+        "stateRoot",
+        "keystoreRoot",
+        "associationSetRoot",
+        "amountOut",
+        "tokenIdOut",
+        "context"
+      ],
+      "graph": {
+        "file": "transact_5x5.graph.bin",
+        "sha256": "c33c2701a2b4ef599658fcc548598ea1a8c42a6998084078491151db81887cd1",
+        "bytes": 3369717
+      },
+      "vkey": {
+        "file": "transact_5x5.vkey.json",
+        "sha256": "8483810134671559f8ca3f35bb0da19e51feb6bc4efa573b44099789c07e33d9",
+        "bytes": 6095
+      },
+      "zkey": {
+        "file": "transact_5x5.zkey",
+        "sha256": "7c70692fc7e41e7dec43159d18ca8aef73891f945e09019e4ebe5d7ea0673ed5",
+        "bytes": 69011749,
+        "url": "https://media.githubusercontent.com/media/0xbow-io/privacy-pools-v2-monorepo/1ee57b03a7a6a26a4bb70e9b3b49a4ca7fe2f6da/packages/circuits/build/transact_5x5/groth16_pkey.zkey",
+        "bundled": false
+      }
+    }
+  }
+}

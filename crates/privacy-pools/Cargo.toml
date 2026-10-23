@@ -12,6 +12,15 @@ default = ["bundled", "parallel"]
 # Embed the circuit artifacts (graph + zkey + vkey) into the binary via
 # include_bytes!. Without it, load artifacts from a directory at runtime.
 bundled = []
+# Privacy Pools v2: embed the graph + vkey of all 27 circuits (~52 MB) and the
+# zkeys of deposit, ragequit and transact_1x1 (~24 MB). The other 24 zkeys
+# (~984 MB) install into a `v2::CircuitStore`
+# directory on request. Artifacts come from `cargo xtask pull-circuits-v2`.
+partial-bundled-v2 = []
+# `v2::CircuitStore::download`: fetch missing v2 zkeys from GitHub (blocking,
+# ureq + rustls), with progress and cancellation. Pass your own `ureq::Agent`
+# (e.g. arti-ureq for Tor) via `download_with`.
+download = ["partial-bundled-v2", "dep:ureq"]
 # Multi-threaded proving (rayon). Must be a feature on THIS crate because the
 # vendored QAP witness map uses ark_std's `cfg_iter!`, which keys off the
 # invoking crate's `parallel` feature — not just the ark deps' features.
@@ -55,6 +64,8 @@ rayon = { version = "1", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 hex = { workspace = true }
+# sha256 checks of installed v2 artifacts.
+sha2 = { workspace = true }
 
 # Input-derivation helpers (commitments, Merkle proofs, context). circomlib-
 # compatible Poseidon over BN254; light-poseidon 0.4 tracks arkworks 0.5.
@@ -77,6 +88,11 @@ alloy = { version = "2.0.1", optional = true, default-features = false, features
     "std",
     "contract",
     "rpc-types-eth",
+] }
+
+# Blocking HTTP for the `download` feature. rustls only (no gzip, no native-tls).
+ureq = { version = "3.5", optional = true, default-features = false, features = [
+    "rustls",
 ] }
 
 [dev-dependencies]

@@ -21,6 +21,13 @@ pub enum Error {
     /// A chain interaction failed (RPC error, log decode, etc.) — only produced
     /// by the `onchain` sync layer.
     Chain(String),
+    /// A v2 circuit's artifacts are neither embedded nor installed yet; see
+    /// `v2::CircuitStore::missing` / `download`.
+    CircuitNotDownloaded(String),
+    /// Fetching a v2 artifact failed (`download` feature).
+    Download(String),
+    /// A download or install was cancelled by its progress callback.
+    Cancelled,
 }
 
 impl fmt::Display for Error {
@@ -33,6 +40,11 @@ impl fmt::Display for Error {
             Error::VerificationFailed => write!(f, "groth16 verification failed"),
             Error::Io(e) => write!(f, "io error: {e}"),
             Error::Chain(m) => write!(f, "chain error: {m}"),
+            Error::CircuitNotDownloaded(c) => {
+                write!(f, "circuit {c} is not downloaded yet")
+            }
+            Error::Download(m) => write!(f, "download failed: {m}"),
+            Error::Cancelled => write!(f, "cancelled"),
         }
     }
 }

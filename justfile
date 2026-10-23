@@ -11,15 +11,23 @@ default:
 
 # Run the full Rust test suite (release).
 test:
-    cargo test --workspace --release
+    cargo test --workspace --release --features privacy-pools/download
 
 # Lint with clippy (warnings as errors).
 lint:
-    cargo clippy --workspace --all-targets -- -D warnings
+    cargo clippy --workspace --all-targets --features privacy-pools/download -- -D warnings
 
 # Generate / refresh the bundled circuit artifacts (pass --force to rebuild).
 pull-circuits *args:
     cargo xtask pull-circuits {{args}}
+
+# Generate the Privacy Pools v2 artifacts (pass --force to rebuild).
+pull-circuits-v2 *args:
+    cargo xtask pull-circuits-v2 {{args}}
+
+# Download the 24 non-bundled v2 zkeys (~984 MB) from GitHub and prove every transact shape.
+test-v2-download:
+    cargo test --release -p privacy-pools --features download --test v2_proving -- --ignored --nocapture
 
 # ---------------------------------------------------------------------------
 # Validation (see validation/README.md)

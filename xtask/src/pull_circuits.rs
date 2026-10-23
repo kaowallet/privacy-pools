@@ -39,14 +39,14 @@ const PP_CORE_REPO: &str = "https://github.com/0xbow-io/privacy-pools-core.git";
 /// privacy-pools-core v1.2.1 -> commit a80836a47451e662f127af17e11430ffa976c234
 const PP_CORE_REF: &str = "v1.2.1";
 
-const CIRCOMLIB_REPO: &str = "https://github.com/iden3/circomlib.git";
+pub(crate) const CIRCOMLIB_REPO: &str = "https://github.com/iden3/circomlib.git";
 /// Matches `packages/circuits/package.json`'s `circomlib: 2.0.5`.
-const CIRCOMLIB_REF: &str = "v2.0.5";
+pub(crate) const CIRCOMLIB_REF: &str = "v2.0.5";
 
 /// The circom-witnesscalc release whose `calc_witness` consumes the graphs we
 /// build, recorded in the manifest. The runtime crate depends on the matching
 /// crates.io `circom-witnesscalc = "0.3.0"`.
-const WITNESSCALC_VERSION: &str = "0.3.0";
+pub(crate) const WITNESSCALC_VERSION: &str = "0.3.0";
 
 /// `build-circuit` is NOT in the published crate — it's an unpublished
 /// workspace member (`extensions/build-circuit`). We build it from the SAME
@@ -169,27 +169,27 @@ struct Manifest {
 }
 
 #[derive(Serialize, Deserialize)]
-struct SourcePin {
-    repo: String,
-    git_ref: String,
+pub(crate) struct SourcePin {
+    pub(crate) repo: String,
+    pub(crate) git_ref: String,
 }
 
 #[derive(Serialize, Deserialize)]
-struct CircuitManifest {
-    template: String,
-    params: Vec<u32>,
+pub(crate) struct CircuitManifest {
+    pub(crate) template: String,
+    pub(crate) params: Vec<u32>,
     /// Public-signal names in verifier order (outputs ++ public inputs).
-    public_signals: Vec<String>,
-    graph: ArtifactFile,
-    zkey: ArtifactFile,
-    vkey: ArtifactFile,
+    pub(crate) public_signals: Vec<String>,
+    pub(crate) graph: ArtifactFile,
+    pub(crate) zkey: ArtifactFile,
+    pub(crate) vkey: ArtifactFile,
 }
 
 #[derive(Serialize, Deserialize)]
-struct ArtifactFile {
-    file: String,
-    sha256: String,
-    bytes: u64,
+pub(crate) struct ArtifactFile {
+    pub(crate) file: String,
+    pub(crate) sha256: String,
+    pub(crate) bytes: u64,
 }
 
 // ---------------------------------------------------------------------------
@@ -329,7 +329,7 @@ fn clone_core(dest: &Path, git_ref: &str) -> Result<()> {
     Ok(())
 }
 
-fn clone_circomlib(dest: &Path) -> Result<()> {
+pub(crate) fn clone_circomlib(dest: &Path) -> Result<()> {
     println!("→ cloning {CIRCOMLIB_REPO} @ {CIRCOMLIB_REF}");
     fs::create_dir_all(dest.parent().unwrap()).ok();
     sh(
@@ -348,7 +348,7 @@ fn clone_circomlib(dest: &Path) -> Result<()> {
     Ok(())
 }
 
-fn compile_graph(
+pub(crate) fn compile_graph(
     build_circuit: &Path,
     circuit: &Path,
     out: &Path,
@@ -388,7 +388,7 @@ fn compile_graph(
 /// We deliberately do NOT pick up a random `build-circuit` from `$PATH`: a
 /// version-mismatched binary could emit a graph the runtime crate's pinned
 /// `calc_witness` can't read.
-fn ensure_build_circuit(work: &Path) -> Result<PathBuf> {
+pub(crate) fn ensure_build_circuit(work: &Path) -> Result<PathBuf> {
     if let Some(custom) = std::env::var_os("BUILD_CIRCUIT") {
         let p = PathBuf::from(custom);
         if !p.exists() {
@@ -450,7 +450,7 @@ fn ensure_build_circuit(work: &Path) -> Result<PathBuf> {
 // Helpers
 // ---------------------------------------------------------------------------
 
-fn workspace_root() -> Result<PathBuf> {
+pub(crate) fn workspace_root() -> Result<PathBuf> {
     // xtask's CARGO_MANIFEST_DIR is `<root>/xtask`.
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     manifest
@@ -459,7 +459,7 @@ fn workspace_root() -> Result<PathBuf> {
         .context("locating workspace root")
 }
 
-fn ensure_git() -> Result<()> {
+pub(crate) fn ensure_git() -> Result<()> {
     Command::new("git")
         .arg("--version")
         .output()
@@ -467,7 +467,7 @@ fn ensure_git() -> Result<()> {
     Ok(())
 }
 
-fn sh(cmd: &mut Command, what: &str) -> Result<()> {
+pub(crate) fn sh(cmd: &mut Command, what: &str) -> Result<()> {
     let status = cmd
         .status()
         .with_context(|| format!("failed to spawn `{what}`"))?;
@@ -477,13 +477,13 @@ fn sh(cmd: &mut Command, what: &str) -> Result<()> {
     Ok(())
 }
 
-fn copy_file(src: &Path, dst: &Path) -> Result<()> {
+pub(crate) fn copy_file(src: &Path, dst: &Path) -> Result<()> {
     fs::copy(src, dst)
         .with_context(|| format!("copying {} -> {}", src.display(), dst.display()))?;
     Ok(())
 }
 
-fn artifact_file(path: &Path) -> Result<ArtifactFile> {
+pub(crate) fn artifact_file(path: &Path) -> Result<ArtifactFile> {
     let bytes = fs::read(path).with_context(|| format!("reading {}", path.display()))?;
     let digest = Sha256::digest(&bytes);
     Ok(ArtifactFile {

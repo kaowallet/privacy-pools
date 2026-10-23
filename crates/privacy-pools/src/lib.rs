@@ -67,6 +67,8 @@ mod poseidon;
 mod sync;
 mod tree;
 
+pub mod v2;
+
 #[cfg(feature = "account")]
 pub use account::{Account, MasterKeys};
 pub use circuit::{Circuit, MAX_TREE_DEPTH};
@@ -74,6 +76,7 @@ pub use circuit::{Circuit, MAX_TREE_DEPTH};
 // alloy instance the bindings are built against — no duplicate alloy in the tree.
 #[cfg(feature = "onchain")]
 pub use alloy;
+// Same for ureq, so `v2::CircuitStore::download_with` takes the caller's agent.
 pub use commitment::{commitment_hash, nullifier_hash, precommitment, Commitment};
 pub use context::{context, label, scope, Address, Withdrawal};
 pub use error::{Error, Result};
@@ -102,6 +105,8 @@ pub use sync::{
     ROOT_HISTORY_SIZE,
 };
 pub use tree::{compute_root, verify_inclusion, LeanImt, MerkleProof};
+#[cfg(feature = "download")]
+pub use ureq;
 pub use verifier::Verifier;
 pub use witness::{parse_wtns, GraphWitness, WitnessGenerator};
 

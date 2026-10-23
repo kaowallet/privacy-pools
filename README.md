@@ -13,9 +13,10 @@ Generate and verify [Privacy Pools](https://github.com/0xbow-io/privacy-pools-co
 ## Layout
 
 ```
-xtask/                         cargo xtask pull-circuits  (artifact pipeline)
+xtask/                         cargo xtask pull-circuits[-v2]  (artifact pipeline)
 crates/privacy-pools/
   artifacts/                   generated: <c>.graph.bin / <c>.zkey / <c>.vkey.json + manifest.json
+  artifacts/v2/                generated: same, for Privacy Pools v2 (ceremony keys)
   src/
     field, witness, proof,     ── engine (protocol-agnostic; extract later)
     prover, verifier, vendor/
@@ -23,6 +24,7 @@ crates/privacy-pools/
     commitment, tree, context  ── input derivation (Poseidon, LeanIMT, scope/label/context)
     account                    ── HD keys           (feature: account)
     onchain, sync, flow        ── wallet SDK        (feature: onchain / wallet)
+    v2/                        ── Privacy Pools v2 circuits + CircuitStore (partial-bundled-v2 / download)
 ```
 
 The `vendor/` module is the only non-arkworks proving glue: `read_zkey` and
@@ -87,6 +89,13 @@ outputs, LeanIMT roots vs the `withdraw` circuit's state/ASP roots, and
 
 - `bundled` *(default)* — embed artifacts via `include_bytes!`. With it off,
   load them at runtime: `WithdrawProver::from_dir("…/artifacts")`.
+- `partial-bundled-v2` — embed the Privacy Pools v2 graph + vkey of all 27
+  circuits and the zkeys of deposit, ragequit and transact_1x1 (withdraw from
+  one note). The other 24 zkeys install into a `v2::CircuitStore` directory on
+  request.
+- `download` — `v2::CircuitStore::download`: fetch missing v2 zkeys from GitHub
+  (blocking ureq + rustls, with progress and cancellation). Implies
+  `partial-bundled-v2`.
 - `parallel` *(default)* — multi-threaded proving (rayon).
 - `account` — HD key derivation (`Account`), byte-compatible with the 0xbow SDK.
 - `onchain` — alloy ABI bindings, calldata builders, and the async `Syncer`
@@ -95,7 +104,10 @@ outputs, LeanIMT roots vs the `withdraw` circuit's state/ASP roots, and
 
 **Bundle size:** with `bundled` on, the embedded artifacts add **~18.7 MB** to
 your binary — almost all of it `withdraw.zkey` (17 MB, the withdraw proving key);
-the commitment circuit adds ~0.9 MB and the vkeys are a few KB each. Local
+the commitment circuit adds ~0.9 MB and the vkeys are a few KB each.
+`partial-bundled-v2` adds another **~76 MB**: 24 MB for the three zkeys
+(transact_1x1 is 17 MB, ragequit 6 MB, deposit 1.2 MB) and 52 MB for all 27
+graphs. The remaining 24 zkeys are **~984 MB** downloaded on request. Local
 *proving* needs the zkeys; verify-only or size-sensitive builds can turn
 `bundled` off and load artifacts at runtime with `from_dir` / `from_vkey_json`.
 
@@ -182,6 +194,61 @@ frontend; needs `protoc`); set `$BUILD_CIRCUIT` to reuse an existing binary.
 To track a new upstream release, bump `PP_CORE_REF` in
 [`xtask/src/pull_circuits.rs`](xtask/src/pull_circuits.rs) and re-run. The zkeys
 must match whatever on-chain Groth16 verifier you target.
+
+### Privacy Pools v2
+
+```
+cargo xtask pull-circuits-v2          # graphs + vkeys for all 27, zkeys for the bundled 5
+cargo xtask pull-circuits-v2 --force  # rebuild
+```
+
+This pins **privacy-pools-v2-monorepo `v1.0.2`**, circomlib `v2.0.5` and zk-kit
+`binary-merkle-root.circom` `v2.0.0`. It compiles upstream's committed circomkit
+`main` files with the same `build-circuit --O1`, which resolves to circom 2.2.3,
+the compiler version the v2 circuits target. It stages the graph and the
+**ppv2-ceremony** vkey of every circuit, plus the zkeys `partial-bundled-v2`
+embeds, into `artifacts/v2/`. The zkeys are git-lfs objects, fetched through
+the GitHub LFS batch API with `curl`, so git-lfs isn't needed. Each one has to
+match the sha256 that
+[`xtask/src/pull_circuits_v2.rs`](xtask/src/pull_circuits_v2.rs) pins from
+upstream `CEREMONY.md`.
+
+`artifacts/v2/manifest.json` is the catalog every build embeds. It lists the
+sha256, size and GitHub URL at the pinned commit for all 27 zkeys.
+`v2::CircuitStore` serves embedded artifacts first, then files installed in its
+directory, checking sizes and sha256 on load:
+
+```rust
+use privacy_pools::v2::{Circuit, CircuitStore};
+use std::ops::ControlFlow;
+
+let store = CircuitStore::new(app_data_dir.join("circuits"));
+let needed = Circuit::Transact { inputs: 3, outputs: 2 };
+let missing = store.missing([needed])?;              // empty for the bundled three
+if !missing.is_empty() {
+    let bytes: u64 = missing.iter().map(|s| s.bytes).sum();
+    // wallet: "This needs a one-time {bytes} download", then on confirm (off the UI thread):
+    store.download(Circuit::all(), |p| {             // all at once; see the privacy note
+        report(p.done, p.total);
+        ControlFlow::Continue(())                    // Break(()) cancels
+    })?;
+}
+let proof = store.prover(needed)?.prove(&inputs_json)?;
+```
+
+**Privacy:** the transact shape is public on-chain, so downloading one
+`transact_NxM` right before using it links your IP to that transaction. Prefer
+downloading every missing zkey at once, well ahead of use. Bring your own
+`ureq::Agent` (e.g. a Tor connector) with `download_with`, or your own HTTP
+client with `install_from_reader`.
+
+`tests/v2_proving.rs` proves deposit, ragequit and transact_1x1 from
+first-principles v2 note math and verifies them against the ceremony
+`groth16_vkey.json`. That is the check that our graphs' wire layout matches the
+ceremony keys. Its ignored test downloads the other 24 zkeys from GitHub and
+proves every `transact_NxM`, plus a 2x2 private transfer
+(`just test-v2-download`). Typed v2 inputs are not
+built yet.
 
 ## Validation
 
